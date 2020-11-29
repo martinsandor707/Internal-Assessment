@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="648.0" prefWidth="1008.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml_internalassessment.FXMLDocumentController">
+    <children>
+        <Button fx:id="CalculationsButton" layoutX="443.0" layoutY="547.0" onAction="#handleButtonAction" text="Calculations" />
+      <TableView fx:id="table" layoutY="27.0" prefHeight="448.0" prefWidth="1008.0">
+        <columns>
+          <TableColumn fx:id="Name" prefWidth="123.0" text="Name" />
+          <TableColumn fx:id="Phone_adress" prefWidth="129.0" text="Phone adress" />
+            <TableColumn prefWidth="143.0" text="Amount" />
+            <TableColumn prefWidth="168.0" text="Paid by" />
+            <TableColumn fx:id="Comment" prefWidth="442.0" text="Comment" />
+        </columns>
+      </TableView>
+      <Label fx:id="MenuLabel" layoutX="435.0" layoutY="475.0" text="MAIN MENU">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+      <Label fx:id="SpreadsheetLabel" layoutX="389.0" layoutY="-1.0" text="SPREADSHEET NAME">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Label>
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="138.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="New" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Save" />
+                  <MenuItem mnemonicParsing="false" text="Save as..." />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Open" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <ButtonBar layoutX="639.0" prefHeight="30.0" prefWidth="369.0">
+        <buttons>
+            <Button fx:id="DetailedButton" mnemonicParsing="false" onAction="#HandleChangeScene2" text="Cur. Lessee" />
+            <Button mnemonicParsing="false" text="Tutorial" />
+          <Button mnemonicParsing="false" onAction="#HandleRewindAction" text="Rewind" />
+            <Button mnemonicParsing="false" text="Forward" />
+        </buttons>
+      </ButtonBar>
+      <Label fx:id="MessageLabel" layoutX="435.0" layoutY="608.0">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+      <Button fx:id="ChangeSceneButton" layoutX="53.0" layoutY="547.0" onAction="#HandleChangeScene" text="Add element" />
+      <Button fx:id="DeleteButton" layoutX="781.0" layoutY="547.0" text="Delete Selected Row" />
+      <Button fx:id="SaveButton" layoutX="138.0" layoutY="2.0" onAction="#HandleSaveData" text="Save" />
+    </children>
+</AnchorPane>
