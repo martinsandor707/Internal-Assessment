@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,7 @@ public class FXMLDocumentController implements Initializable {
         ((Person)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setName(t.getNewValue());
+                update();
         });
         
         FXML_InternalAssessment.getPersons().forEach((p) ->{
@@ -138,13 +140,15 @@ public class FXMLDocumentController implements Initializable {
    //This method is called every time the contents of the table are manipulated:
    //At adding a new element, at deleting or modifying an already existing element 
     public void update(){
+//        MessageLabel.setText("Update method used");
+        FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
         List<Person> persons2=new ArrayList<>();
         table.getItems().forEach((p) -> {
             persons2.add(p);
         });
-        FXML_InternalAssessment.Persons=persons2;
-        FXML_InternalAssessment.Persons.forEach((p) -> {
+        app.Persons=persons2;
+        app.Persons.forEach((p) -> {
             JSONObject obj1= new JSONObject();
             obj1.put("Name", p.getName());
             obj1.put("Phone_adress", p.getPhone_adress());
@@ -165,7 +169,9 @@ public class FXMLDocumentController implements Initializable {
         catch(IOException e){
             e.printStackTrace();
         }
-        
+        app.currentNode.setNext(app.Persons);
+        app.currentNode=app.currentNode.getNext();
+        if (app.currentNode.getListSize()>5) app.currentNode.removeFirst();
     }
 
     @FXML
@@ -208,9 +214,93 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
+    //Method is called when the "Rewind" button is pressed. It reverts the table to it's previous state, just before the latest modification
+    //Currently can't revert the addition of rows, neither the modification of existing cells for an unknown reason.
     private void HandleRewindAction(ActionEvent event) {
+//        System.out.println("Rewind pressed");
+        FXML_InternalAssessment app=new FXML_InternalAssessment();
+        JSONArray array=new JSONArray();
         
-                
+        if (app.currentNode.getPrev()!=null) app.currentNode=app.currentNode.getPrev();
+        else return;
+        app.Persons=app.currentNode.getValue();
+        
+        app.Persons.forEach((p) -> {
+            JSONObject obj1= new JSONObject();
+            obj1.put("Name", p.getName());
+            obj1.put("Phone_adress", p.getPhone_adress());
+            obj1.put("Comment", p.getComment());
+
+            JSONObject o1= new JSONObject();
+            o1.put("Person", obj1);
+
+            array.add(o1);
+            
+        });
+        
+        
+        try(FileWriter file=new FileWriter("OutputTemporary.json")){
+             file.write(array.toJSONString());
+             file.flush();
+             
+            table.getItems().removeAll(table.getItems());
+            app.Persons.forEach((p) ->{
+                table.getItems().add(p);
+            });
+            table.refresh();
+        }
+        
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }        
+        app.currentNode.getListSize();
+    }
+
+    @FXML
+    private void HandleForwardAction(ActionEvent event) {
+//        System.out.println("Forward pressed");
+        FXML_InternalAssessment app=new FXML_InternalAssessment();
+        JSONArray array=new JSONArray();
+        
+        if (app.currentNode.getNext()!=null) app.currentNode=app.currentNode.getNext();
+        else return;
+        app.Persons=app.currentNode.getValue();
+        
+        app.Persons.forEach((p) -> {
+            JSONObject obj1= new JSONObject();
+            obj1.put("Name", p.getName());
+            obj1.put("Phone_adress", p.getPhone_adress());
+            obj1.put("Comment", p.getComment());
+
+            JSONObject o1= new JSONObject();
+            o1.put("Person", obj1);
+
+            array.add(o1);
+            
+        });
+        
+        
+        try(FileWriter file=new FileWriter("OutputTemporary.json")){
+             file.write(array.toJSONString());
+             file.flush();
+             
+            table.getItems().removeAll(table.getItems());
+            app.Persons.forEach((p) ->{
+                table.getItems().add(p);
+            });
+            table.refresh();
+        }
+        
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        catch (NullPointerException e){
+            e.printStackTrace();
+        }        
+        app.currentNode.getListSize();
         
     }
     

@@ -95,7 +95,7 @@ public class FXML_InternalAssessment extends Application {
             
         }
         
-        currentNode.setValue(Persons);
+        currentNode=new RewindLinkedList(Persons, null, null);
         
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         

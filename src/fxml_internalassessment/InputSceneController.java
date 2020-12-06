@@ -85,7 +85,9 @@ public class InputSceneController implements Initializable {
             e.printStackTrace();
         }
         
-        
+        FXML_InternalAssessment.currentNode.setNext(FXML_InternalAssessment.Persons);
+        FXML_InternalAssessment.currentNode=FXML_InternalAssessment.currentNode.getNext();
+        if (FXML_InternalAssessment.currentNode.getListSize()>5) FXML_InternalAssessment.currentNode.removeFirst();
     }
 
     @FXML
