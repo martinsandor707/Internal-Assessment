@@ -52,6 +52,7 @@ public class InputSceneController implements Initializable {
     }    
 
     @FXML
+    //Add the contents of the TextFields to the database
     private void addButtonAction(ActionEvent event) {
         Person input=new Person(nameTextField.getText(), phoneTextField.getText(), commentTextField.getText());
         FXML_InternalAssessment.Persons.add(input);
@@ -84,13 +85,14 @@ public class InputSceneController implements Initializable {
         catch(IOException e){
             e.printStackTrace();
         }
-        
+        //Keeps track of previous version for the sake of rewinding
         FXML_InternalAssessment.currentNode.setNext(FXML_InternalAssessment.Persons);
         FXML_InternalAssessment.currentNode=FXML_InternalAssessment.currentNode.getNext();
         if (FXML_InternalAssessment.currentNode.getListSize()>5) FXML_InternalAssessment.currentNode.removeFirst();
     }
 
     @FXML
+    //Go back to the main window
     private void HandleChangeScene(ActionEvent event) {
         try{
             Parent newPersonParent=FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));

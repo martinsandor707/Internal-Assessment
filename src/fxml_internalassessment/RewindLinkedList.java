@@ -96,7 +96,7 @@ public class RewindLinkedList {
         }
         cur.setValue(value);
     }
-    
+    //Appends the given element to the beginning of the list
     public void addFirst(List<Person> value){
         RewindLinkedList cur=new RewindLinkedList(this.value, prev, next);
         while (cur.getPrev()!=null){
@@ -105,7 +105,7 @@ public class RewindLinkedList {
         RewindLinkedList newFirst=new RewindLinkedList(value, null, cur);
         cur.setPrev(newFirst);
     }
-    
+    //Deletes the element at the beginning of the list
     public void removeFirst(){
         RewindLinkedList cur=new RewindLinkedList(this.value, prev, next);
         while (cur.getPrev().getPrev()!=null){
@@ -132,7 +132,7 @@ public class RewindLinkedList {
          cur.setNode(node);
          cur.next=null;
     }
-    
+    //Appends the specified element to the end of the list
     public void addLast(List<Person> value){
         RewindLinkedList cur=new RewindLinkedList(this.value, prev, next);
         while (cur.getNext()!=null){
@@ -141,7 +141,7 @@ public class RewindLinkedList {
         RewindLinkedList newNode=new RewindLinkedList(value, cur, null);
         cur.setNext(newNode);
     }
-    
+    //Removes the last element from the list
     public void removeLast(){
         RewindLinkedList cur=new RewindLinkedList(value, prev, next);
         while (cur.getNext().getNext()!=null){

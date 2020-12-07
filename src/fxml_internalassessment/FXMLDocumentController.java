@@ -71,6 +71,7 @@ public class FXMLDocumentController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //All columns are initialized
         Name.setCellValueFactory(new PropertyValueFactory<>("Name"));
         Phone_adress.setCellValueFactory(new PropertyValueFactory<>("Phone_adress"));
         Comment.setCellValueFactory(new PropertyValueFactory<>("Comment"));
@@ -85,11 +86,12 @@ public class FXMLDocumentController implements Initializable {
                 update();
         });
         
+        //Loads the elements of Persons into the table
         FXML_InternalAssessment.getPersons().forEach((p) ->{
             table.getItems().add(p);
         });
         
-        
+        //Delete button functionality
         DeleteButton.setOnAction(e -> {
             Person selectedItem=table.getSelectionModel().getSelectedItem();
             table.getItems().remove(selectedItem);
@@ -144,9 +146,11 @@ public class FXMLDocumentController implements Initializable {
         FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
         List<Person> persons2=new ArrayList<>();
+        //Collects the contents of the table into a list
         table.getItems().forEach((p) -> {
             persons2.add(p);
         });
+        //updates database to have the elements corresponding with the table
         app.Persons=persons2;
         app.Persons.forEach((p) -> {
             JSONObject obj1= new JSONObject();
@@ -160,7 +164,7 @@ public class FXMLDocumentController implements Initializable {
             array.add(o1);
         });
         
-        
+        //copies database into temporary file
         try(FileWriter file=new FileWriter("OutputTemporary.json")){
              file.write(array.toJSONString());
              file.flush();
@@ -169,6 +173,7 @@ public class FXMLDocumentController implements Initializable {
         catch(IOException e){
             e.printStackTrace();
         }
+        //Keeps track of the state of the table, in case the user wants to rewind
         app.currentNode.setNext(app.Persons);
         app.currentNode=app.currentNode.getNext();
         if (app.currentNode.getListSize()>5) app.currentNode.removeFirst();
@@ -176,23 +181,24 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     public void HandleSaveData(ActionEvent event) {
-        FileInputStream ins=null;
-        FileOutputStream outs=null;
+        FileInputStream ins;
+        FileOutputStream outs;
         try{
             File outputTemp = new File("OutputTemporary.json");
             File outputReal = new File("Output.json");
+            //Create streams
             ins = new FileInputStream(outputTemp);
             outs = new FileOutputStream(outputReal);
             byte[] buffer = new byte[1024];
             int length;
-            
+            //Write into Output.json as long as the outputstream is not empty
             while((length = ins.read(buffer)) > 0){
                 outs.write(buffer, 0, length);
             }
+            //Close streams
             ins.close();
             outs.close();
             
-            FXML_InternalAssessment app=new FXML_InternalAssessment();
             MessageLabel.setText("File saved successfully!");
         }
         
