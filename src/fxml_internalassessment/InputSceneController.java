@@ -8,6 +8,8 @@ package fxml_internalassessment;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -86,7 +88,11 @@ public class InputSceneController implements Initializable {
             e.printStackTrace();
         }
         //Keeps track of previous version for the sake of rewinding
-        FXML_InternalAssessment.currentNode.setNext(FXML_InternalAssessment.Persons);
+        List<Person> newNode=new ArrayList<>();
+        FXML_InternalAssessment.Persons.forEach(p ->{
+            newNode.add(p);
+        });
+        FXML_InternalAssessment.currentNode.setNext(newNode);
         FXML_InternalAssessment.currentNode=FXML_InternalAssessment.currentNode.getNext();
         if (FXML_InternalAssessment.currentNode.getListSize()>5) FXML_InternalAssessment.currentNode.removeFirst();
     }

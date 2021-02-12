@@ -174,7 +174,11 @@ public class FXMLDocumentController implements Initializable {
             e.printStackTrace();
         }
         //Keeps track of the state of the table, in case the user wants to rewind
-        app.currentNode.setNext(app.Persons);
+         List<Person> newNode=new ArrayList<>();
+        table.getItems().forEach(p ->{
+            newNode.add(p);
+        });
+        app.currentNode.setNext(newNode);
         app.currentNode=app.currentNode.getNext();
         if (app.currentNode.getListSize()>5) app.currentNode.removeFirst();
     }
