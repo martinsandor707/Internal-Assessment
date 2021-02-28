@@ -42,12 +42,20 @@ public class Person {
         this.phone_adress = phone_adress;
         this.comment = comment;
     }
+    public Person(Person person) {
+        this.name = person.name;
+        this.phone_adress = person.phone_adress;
+        this.comment = person.comment;
+    }
     public Person() {
         this.name = "";
         this.phone_adress = "";
         this.comment = "";
     }
-    
+    @Override
+    public String toString(){
+        return "Name: "+name+" Phone adress: "+phone_adress+" Comment: "+comment;
+    }
     
     
     

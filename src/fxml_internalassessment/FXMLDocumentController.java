@@ -134,7 +134,7 @@ public class FXMLDocumentController implements Initializable {
             window.show();
         }
         catch(IOException e){
-            System.out.println(e.toString());
+            e.printStackTrace();
         }
     }
   
@@ -145,7 +145,7 @@ public class FXMLDocumentController implements Initializable {
 //        MessageLabel.setText("Update method used");
         FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
-        List<Person> persons2=new ArrayList<>();
+        ArrayList<Person> persons2=new ArrayList<>();
         //Collects the contents of the table into a list
         table.getItems().forEach((p) -> {
             persons2.add(p);
@@ -174,7 +174,7 @@ public class FXMLDocumentController implements Initializable {
             e.printStackTrace();
         }
         //Keeps track of the state of the table, in case the user wants to rewind
-         List<Person> newNode=new ArrayList<>();
+        ArrayList<Person> newNode=new ArrayList<>();
         table.getItems().forEach(p ->{
             newNode.add(p);
         });
@@ -224,16 +224,16 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    //Method is called when the "Rewind" button is pressed. It reverts the table to it's previous state, just before the latest modification
-    //Currently can't revert the addition of rows, neither the modification of existing cells for an unknown reason.
+    /**
+    *Method is called when the "Rewind" button is pressed. It reverts the table to it's previous state, just before the latest modification
+    * */
     private void HandleRewindAction(ActionEvent event) {
-//        System.out.println("Rewind pressed");
         FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
         
         if (app.currentNode.getPrev()!=null) app.currentNode=app.currentNode.getPrev();
         else return;
-        app.Persons=app.currentNode.getValue();
+        app.Persons=app.currentNode.getValueDeep();
         
         app.Persons.forEach((p) -> {
             JSONObject obj1= new JSONObject();
@@ -266,18 +266,16 @@ public class FXMLDocumentController implements Initializable {
         catch (NullPointerException e){
             e.printStackTrace();
         }        
-        app.currentNode.getListSize();
     }
 
     @FXML
     private void HandleForwardAction(ActionEvent event) {
-//        System.out.println("Forward pressed");
         FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
         
         if (app.currentNode.getNext()!=null) app.currentNode=app.currentNode.getNext();
         else return;
-        app.Persons=app.currentNode.getValue();
+        app.Persons=app.currentNode.getValueDeep();
         
         app.Persons.forEach((p) -> {
             JSONObject obj1= new JSONObject();
@@ -310,8 +308,6 @@ public class FXMLDocumentController implements Initializable {
         catch (NullPointerException e){
             e.printStackTrace();
         }        
-        app.currentNode.getListSize();
-        
     }
     
 }

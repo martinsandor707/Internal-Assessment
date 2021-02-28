@@ -42,14 +42,14 @@ import org.json.simple.parser.ParseException;
  */
 public class FXML_InternalAssessment extends Application {
     //The current state of the database
-  public static List<Person> Persons;
+  public static ArrayList<Person> Persons;
   //Used for the "rewind" and "fast forward" functions
   public static RewindLinkedList currentNode;
 
   FXMLDocumentController app=new FXMLDocumentController();
   
 
-    public static void setPersons(List<Person> Persons) {
+    public static void setPersons(ArrayList<Person> Persons) {
         FXML_InternalAssessment.Persons = Persons;
     }
 
@@ -130,7 +130,9 @@ public class FXML_InternalAssessment extends Application {
             e.printStackTrace();
         }
     }
-     //Displays pop-up window  asking whether the user wants to save before exiting the application
+    /**
+    *Displays pop-up window  asking whether the user wants to save before exiting the application
+    */
     private EventHandler<WindowEvent> confirmCloseRequestHandler= event ->{
         if (!isSameContent())
         {
@@ -202,8 +204,9 @@ public class FXML_InternalAssessment extends Application {
         p1.setComment((String)userObj.get("Comment"));
         Persons.add(p1);
     }
-    
-    //Checks the contents of Output.json and OutputTemporary.json and returns true if their content is identical, false otherwise
+    /**
+    *Checks the contents of Output.json and OutputTemporary.json and returns true if their content is identical, false otherwise
+    * */
     private boolean isSameContent(){
         try{
             //initializing variables referring to the two databases

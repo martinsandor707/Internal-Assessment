@@ -88,7 +88,7 @@ public class InputSceneController implements Initializable {
             e.printStackTrace();
         }
         //Keeps track of previous version for the sake of rewinding
-        List<Person> newNode=new ArrayList<>();
+        ArrayList<Person> newNode=new ArrayList<>();
         FXML_InternalAssessment.Persons.forEach(p ->{
             newNode.add(p);
         });
