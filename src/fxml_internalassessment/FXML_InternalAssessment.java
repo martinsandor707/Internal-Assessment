@@ -42,19 +42,19 @@ import org.json.simple.parser.ParseException;
  */
 public class FXML_InternalAssessment extends Application {
     //The current state of the database
-  public static ArrayList<Person> Persons;
+  public static ArrayList<Entry> Entries;
   //Used for the "rewind" and "fast forward" functions
   public static RewindLinkedList currentNode;
 
   FXMLDocumentController app=new FXMLDocumentController();
   
 
-    public static void setPersons(ArrayList<Person> Persons) {
-        FXML_InternalAssessment.Persons = Persons;
+    public static void setEntries(ArrayList<Entry> Entries) {
+        FXML_InternalAssessment.Entries = Entries;
     }
 
-    public static List<Person> getPersons() {
-        return Persons;
+    public static List<Entry> getEntries() {
+        return Entries;
     }
     
     public static void setCurrentNode(RewindLinkedList currentNode) {
@@ -67,14 +67,14 @@ public class FXML_InternalAssessment extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Persons=new ArrayList<>();
+        Entries=new ArrayList<>();
         JSONParser parser=new JSONParser();
         
         try{
-            //Reads all elements from the json database and parses it into Persons for later use
+            //Reads all elements from the json database and parses it into Entries for later use
             Object obj= parser.parse(new FileReader("Output.json"));
             JSONArray jsonArray=(JSONArray)obj;            
-            jsonArray.forEach(p ->parsePersonObj((JSONObject)p));
+            jsonArray.forEach(p ->parseEntryObj((JSONObject)p));
             //Immediately create a temporary copy of the database
             FileWriter file=new FileWriter("OutputTemporary.json");
             file.write(jsonArray.toJSONString());
@@ -94,7 +94,7 @@ public class FXML_InternalAssessment extends Application {
             
         }
         
-        currentNode=new RewindLinkedList(Persons, null, null);
+        currentNode=new RewindLinkedList(Entries, null, null);
         
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
@@ -196,13 +196,19 @@ public class FXML_InternalAssessment extends Application {
         launch(args);
     }
     //Used after the elements of Output.json are contained in a JSONArray
-    private void parsePersonObj(JSONObject p){
-        JSONObject userObj = (JSONObject)p.get("Person");
-        Person p1=new Person();
-        p1.setName((String)userObj.get("Name"));
-        p1.setPhone_adress((String)userObj.get("Phone_adress"));
+    private void parseEntryObj(JSONObject p){
+        JSONObject userObj = (JSONObject)p.get("Entry");
+        Entry p1=new Entry();
+        
+        p1.setDate((String)userObj.get("Date"));
+        
+        p1.setType((String)userObj.get("Type"));
+        p1.setPaid_by((String)userObj.get("Paid_by"));
         p1.setComment((String)userObj.get("Comment"));
-        Persons.add(p1);
+        //NUMBERS IN JSON ARE STORED AS LONG BY DEFAULT
+        p1.setAmount((int) ((long)userObj.get("Amount")));
+        System.out.println("Third line of ParseEntry");
+        Entries.add(p1);
     }
     /**
     *Checks the contents of Output.json and OutputTemporary.json and returns true if their content is identical, false otherwise

@@ -9,13 +9,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,9 +29,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
+import javafx.util.converter.IntegerStringConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -43,15 +40,17 @@ import org.json.simple.parser.ParseException;
 public class FXMLDocumentController implements Initializable {
     
     @FXML
-    private TableView<Person> table;
+    private TableView<Entry> table;
     @FXML
-    private TableColumn<Person, String> Name;
+    private TableColumn<Entry, String> Date;
     @FXML
-    private TableColumn<Person, String> Phone_adress;
+    private TableColumn<Entry, String> Type;
     @FXML
-    private TableColumn<Person, String> Comment;
+    private TableColumn<Entry, String> Paid_by;
     @FXML
-    private Button ChangeSceneButton;
+    private TableColumn<Entry, String> Comment;
+    @FXML
+    private TableColumn<Entry, Integer> Amount;
     @FXML
     private Button DeleteButton;
     @FXML
@@ -66,34 +65,70 @@ public class FXMLDocumentController implements Initializable {
     private Label MenuLabel;
     @FXML
     private Label SpreadsheetLabel;
-    
-    
+    @FXML
+    private Button ChangeSceneButton;
+    //Required by Adress to convert the user's input from String to Integer
+    IntegerStringConverter converter=new IntegerStringConverter();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //All columns are initialized
-        Name.setCellValueFactory(new PropertyValueFactory<>("Name"));
-        Phone_adress.setCellValueFactory(new PropertyValueFactory<>("Phone_adress"));
+        Date.setCellValueFactory(new PropertyValueFactory<>("Date"));
+        Type.setCellValueFactory(new PropertyValueFactory<>("Type"));
+        Paid_by.setCellValueFactory(new PropertyValueFactory<>("Paid_by"));
         Comment.setCellValueFactory(new PropertyValueFactory<>("Comment"));
+        Amount.setCellValueFactory(new PropertyValueFactory<>("Amount"));
         table.setEditable(true);
         
         //Makes the given column editable
-        Name.setCellFactory(TextFieldTableCell.forTableColumn()); 
-        Name.setOnEditCommit((CellEditEvent<Person, String> t) ->{
-        ((Person)t.getTableView().getItems().get(
+        Date.setCellFactory(TextFieldTableCell.forTableColumn()); 
+        Date.setOnEditCommit((CellEditEvent<Entry, String> t) ->{
+        ((Entry)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
-                ).setName(t.getNewValue());
+                ).setDate(t.getNewValue());
                 update();
         });
         
-        //Loads the elements of Persons into the table
-        FXML_InternalAssessment.getPersons().forEach((p) ->{
+        Type.setCellFactory(TextFieldTableCell.forTableColumn()); 
+        Type.setOnEditCommit((CellEditEvent<Entry, String> t) ->{
+        ((Entry)t.getTableView().getItems().get(
+                t.getTablePosition().getRow())
+                ).setType(t.getNewValue());
+                update();
+        });
+        
+        Paid_by.setCellFactory(TextFieldTableCell.forTableColumn()); 
+        Paid_by.setOnEditCommit((CellEditEvent<Entry, String> t) ->{
+        ((Entry)t.getTableView().getItems().get(
+                t.getTablePosition().getRow())
+                ).setPaid_by(t.getNewValue());
+                update();
+        });
+        
+        Comment.setCellFactory(TextFieldTableCell.forTableColumn()); 
+        Comment.setOnEditCommit((CellEditEvent<Entry, String> t) ->{
+        ((Entry)t.getTableView().getItems().get(
+                t.getTablePosition().getRow())
+                ).setComment(t.getNewValue());
+                update();
+        });
+        
+        Amount.setCellFactory(TextFieldTableCell.forTableColumn(converter)); 
+        Amount.setOnEditCommit((CellEditEvent<Entry, Integer> t) ->{
+        ((Entry)t.getTableView().getItems().get(
+                t.getTablePosition().getRow())
+                ).setAmount(t.getNewValue());
+                update();
+        });
+        
+        //Loads the elements of Entries into the table
+        FXML_InternalAssessment.getEntries().forEach((p) ->{
             table.getItems().add(p);
         });
         
         //Delete button functionality
         DeleteButton.setOnAction(e -> {
-            Person selectedItem=table.getSelectionModel().getSelectedItem();
+            Entry selectedItem=table.getSelectionModel().getSelectedItem();
             table.getItems().remove(selectedItem);
             update();
             MessageLabel.setText("Row deleted successfully!");
@@ -119,7 +154,7 @@ public class FXMLDocumentController implements Initializable {
     //Opens Detailed window, gives data of selected row to the other Scene
     @FXML
     private void HandleChangeScene2(ActionEvent event) {
-        Person selectedItem=table.getSelectionModel().getSelectedItem();
+        Entry selectedItem=table.getSelectionModel().getSelectedItem();
          try{
             FXMLLoader loader=new FXMLLoader();
             loader.setLocation(getClass().getResource("DetailedScene.fxml"));
@@ -145,21 +180,23 @@ public class FXMLDocumentController implements Initializable {
 //        MessageLabel.setText("Update method used");
         FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
-        ArrayList<Person> persons2=new ArrayList<>();
+        ArrayList<Entry> entries2=new ArrayList<>();
         //Collects the contents of the table into a list
         table.getItems().forEach((p) -> {
-            persons2.add(p);
+            entries2.add(p);
         });
         //updates database to have the elements corresponding with the table
-        app.Persons=persons2;
-        app.Persons.forEach((p) -> {
+        app.Entries=entries2;
+        app.Entries.forEach((p) -> {
             JSONObject obj1= new JSONObject();
-            obj1.put("Name", p.getName());
-            obj1.put("Phone_adress", p.getPhone_adress());
+            obj1.put("Date", p.getDate());
+            obj1.put("Type", p.getType());
+            obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
+            obj1.put("Amount", p.getAmount());
 
             JSONObject o1= new JSONObject();
-            o1.put("Person", obj1);
+            o1.put("Entry", obj1);
 
             array.add(o1);
         });
@@ -174,7 +211,7 @@ public class FXMLDocumentController implements Initializable {
             e.printStackTrace();
         }
         //Keeps track of the state of the table, in case the user wants to rewind
-        ArrayList<Person> newNode=new ArrayList<>();
+        ArrayList<Entry> newNode=new ArrayList<>();
         table.getItems().forEach(p ->{
             newNode.add(p);
         });
@@ -233,16 +270,18 @@ public class FXMLDocumentController implements Initializable {
         
         if (app.currentNode.getPrev()!=null) app.currentNode=app.currentNode.getPrev();
         else return;
-        app.Persons=app.currentNode.getValueDeep();
+        app.Entries=app.currentNode.getValueDeep();
         
-        app.Persons.forEach((p) -> {
+        app.Entries.forEach((p) -> {
             JSONObject obj1= new JSONObject();
-            obj1.put("Name", p.getName());
-            obj1.put("Phone_adress", p.getPhone_adress());
+            obj1.put("Date", p.getDate());
+            obj1.put("Type", p.getType());
+            obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
+            obj1.put("Amount", p.getAmount());
 
             JSONObject o1= new JSONObject();
-            o1.put("Person", obj1);
+            o1.put("Entry", obj1);
 
             array.add(o1);
             
@@ -254,7 +293,7 @@ public class FXMLDocumentController implements Initializable {
              file.flush();
              
             table.getItems().removeAll(table.getItems());
-            app.Persons.forEach((p) ->{
+            app.Entries.forEach((p) ->{
                 table.getItems().add(p);
             });
             table.refresh();
@@ -275,16 +314,18 @@ public class FXMLDocumentController implements Initializable {
         
         if (app.currentNode.getNext()!=null) app.currentNode=app.currentNode.getNext();
         else return;
-        app.Persons=app.currentNode.getValueDeep();
+        app.Entries=app.currentNode.getValueDeep();
         
-        app.Persons.forEach((p) -> {
+        app.Entries.forEach((p) -> {
             JSONObject obj1= new JSONObject();
-            obj1.put("Name", p.getName());
-            obj1.put("Phone_adress", p.getPhone_adress());
+            obj1.put("Date", p.getDate());
+            obj1.put("Type", p.getType());
+            obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
+            obj1.put("Amount", p.getAmount());
 
             JSONObject o1= new JSONObject();
-            o1.put("Person", obj1);
+            o1.put("Entry", obj1);
 
             array.add(o1);
             
@@ -296,7 +337,7 @@ public class FXMLDocumentController implements Initializable {
              file.flush();
              
             table.getItems().removeAll(table.getItems());
-            app.Persons.forEach((p) ->{
+            app.Entries.forEach((p) ->{
                 table.getItems().add(p);
             });
             table.refresh();

@@ -14,22 +14,22 @@ import java.util.List;
  */
 public class RewindLinkedList {
     
-    private final ArrayList<Person> value;
+    private final ArrayList<Entry> value;
     private RewindLinkedList prev, next;
 
-    public RewindLinkedList(List<Person> value, RewindLinkedList prev, RewindLinkedList next) {
-        ArrayList<Person> newValue = new ArrayList<>();
+    public RewindLinkedList(List<Entry> value, RewindLinkedList prev, RewindLinkedList next) {
+        ArrayList<Entry> newValue = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
-            newValue.add(new Person(value.get(i)));
+            newValue.add(new Entry(value.get(i)));
         }
         this.value = newValue;
         this.prev = prev;
         this.next = next;
     }
     public RewindLinkedList(RewindLinkedList node) {
-        ArrayList<Person> newValue = new ArrayList<>();
+        ArrayList<Entry> newValue = new ArrayList<>();
         for (int i = 0; i < node.value.size(); i++) {
-            newValue.add(new Person(node.value.get(i)));
+            newValue.add(new Entry(node.value.get(i)));
         }
         this.value = newValue;
         this.prev = node.prev;
@@ -46,7 +46,7 @@ public class RewindLinkedList {
         this.prev = prev;
     }
     
-    public void setPrev(List<Person> value) {
+    public void setPrev(List<Entry> value) {
         this.prev =new RewindLinkedList(value, null, this);
     }
 
@@ -55,14 +55,14 @@ public class RewindLinkedList {
         this.next = next;
     }
     
-    public void setNext(List<Person> value) {
+    public void setNext(List<Entry> value) {
         this.next = new RewindLinkedList(value, this, null);
     }
 
-    public ArrayList<Person> getValueDeep() {
-        ArrayList<Person> newValue = new ArrayList<>();
+    public ArrayList<Entry> getValueDeep() {
+        ArrayList<Entry> newValue = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
-            newValue.add(new Person(value.get(i)));
+            newValue.add(new Entry(value.get(i)));
         }
         return newValue;
     }

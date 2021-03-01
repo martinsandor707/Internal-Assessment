@@ -36,12 +36,17 @@ public class InputSceneController implements Initializable {
     private Button addButton;
     @FXML
     private Button backButton;
+
     @FXML
-    private TextField nameTextField;
+    private TextField dateTextField;
     @FXML
-    private TextField phoneTextField;
+    private TextField typeTextField;
+    @FXML
+    private TextField paidByTextField1;
     @FXML
     private TextField commentTextField;
+    @FXML
+    private TextField amountTextField;
     @FXML
     private Label Label;
 
@@ -56,24 +61,28 @@ public class InputSceneController implements Initializable {
     @FXML
     //Add the contents of the TextFields to the database
     private void addButtonAction(ActionEvent event) {
-        Person input=new Person(nameTextField.getText(), phoneTextField.getText(), commentTextField.getText());
-        FXML_InternalAssessment.Persons.add(input);
+        Entry input=new Entry(dateTextField.getText(), typeTextField.getText(), paidByTextField1.getText(), commentTextField.getText(), Integer.parseInt(amountTextField.getText()));
+        FXML_InternalAssessment.Entries.add(input);
         
         JSONArray array=new JSONArray();
         
         Label.setText("Input successful");
-        nameTextField.setText("");
-        phoneTextField.setText("");
+        dateTextField.setText("");
+        typeTextField.setText("");
+        paidByTextField1.setText("");
         commentTextField.setText("");
+        amountTextField.setText("");
         
-        FXML_InternalAssessment.Persons.forEach((p) -> {
+        FXML_InternalAssessment.Entries.forEach((p) -> {
             JSONObject obj1= new JSONObject();
-            obj1.put("Name", p.getName());
-            obj1.put("Phone_adress", p.getPhone_adress());
+            obj1.put("Date", p.getDate());
+            obj1.put("Type", p.getType());
+            obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
+            obj1.put("Amount", p.getAmount());
 
             JSONObject o1= new JSONObject();
-            o1.put("Person", obj1);
+            o1.put("Entry", obj1);
 
             array.add(o1);
         });
@@ -88,8 +97,8 @@ public class InputSceneController implements Initializable {
             e.printStackTrace();
         }
         //Keeps track of previous version for the sake of rewinding
-        ArrayList<Person> newNode=new ArrayList<>();
-        FXML_InternalAssessment.Persons.forEach(p ->{
+        ArrayList<Entry> newNode=new ArrayList<>();
+        FXML_InternalAssessment.Entries.forEach(p ->{
             newNode.add(p);
         });
         FXML_InternalAssessment.currentNode.setNext(newNode);

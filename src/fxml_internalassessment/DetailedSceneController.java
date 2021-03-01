@@ -31,14 +31,14 @@ public class DetailedSceneController implements Initializable {
     @FXML
     private Label nameLabel;
     
-    private Person selectedPerson;
+    private Entry selectedPerson;
 
     
     //Loads data from FXMLDOcument.fxml from the selected row
-    public void initData(Person person)
+    public void initData(Entry person)
     {
         selectedPerson=person;
-        nameLabel.setText(selectedPerson.getName());
+        nameLabel.setText(selectedPerson.getDate());
     }
     /**
      * Initializes the controller class.
