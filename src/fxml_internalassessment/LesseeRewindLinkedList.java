@@ -10,74 +10,74 @@ import java.util.List;
 
 /**
  *
- * @author nando
+ * This class is a carbon copy of RewindLinkedList, customized for ArrayLists with a generic type of Lessee
  */
-public class RewindLinkedList {
+public class LesseeRewindLinkedList {
     
-    private final ArrayList<Entry> value;
-    private RewindLinkedList prev, next;
+    private final ArrayList<Lessee> value;
+    private LesseeRewindLinkedList prev, next;
 
-    public RewindLinkedList(List<Entry> value, RewindLinkedList prev, RewindLinkedList next) {
-        ArrayList<Entry> newValue = new ArrayList<>();
+    public LesseeRewindLinkedList(List<Lessee> value, LesseeRewindLinkedList prev, LesseeRewindLinkedList next) {
+        ArrayList<Lessee> newValue = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
-            newValue.add(new Entry(value.get(i)));
+            newValue.add(new Lessee(value.get(i)));
         }
         this.value = newValue;
         this.prev = prev;
         this.next = next;
     }
-    public RewindLinkedList(RewindLinkedList node) {
-        ArrayList<Entry> newValue = new ArrayList<>();
+    public LesseeRewindLinkedList(LesseeRewindLinkedList node) {
+        ArrayList<Lessee> newValue = new ArrayList<>();
         for (int i = 0; i < node.value.size(); i++) {
-            newValue.add(new Entry(node.value.get(i)));
+            newValue.add(new Lessee(node.value.get(i)));
         }
         this.value = newValue;
         this.prev = node.prev;
         this.next = node.next;
     }
-    public RewindLinkedList() {
+    public LesseeRewindLinkedList() {
         this.value = null;
         this.prev = null;
         this.next = null;
     }
     
-    public void setPrev(RewindLinkedList prev) {
+    public void setPrev(LesseeRewindLinkedList prev) {
         prev.setNext(this);
         this.prev = prev;
     }
     
-    public void setPrev(List<Entry> value) {
-        this.prev =new RewindLinkedList(value, null, this);
+    public void setPrev(List<Lessee> value) {
+        this.prev =new LesseeRewindLinkedList(value, null, this);
     }
 
-    public void setNext(RewindLinkedList next) {
+    public void setNext(LesseeRewindLinkedList next) {
         next.setPrev(this);
         this.next = next;
     }
     
-    public void setNext(List<Entry> value) {
-        this.next = new RewindLinkedList(value, this, null);
+    public void setNext(List<Lessee> value) {
+        this.next = new LesseeRewindLinkedList(value, this, null);
     }
 
-    public ArrayList<Entry> getValueDeep() {
-        ArrayList<Entry> newValue = new ArrayList<>();
+    public ArrayList<Lessee> getValueDeep() {
+        ArrayList<Lessee> newValue = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
-            newValue.add(new Entry(value.get(i)));
+            newValue.add(new Lessee(value.get(i)));
         }
         return newValue;
     }
 
-    public RewindLinkedList getPrev() {
+    public LesseeRewindLinkedList getPrev() {
         return prev;
     }
     
-    public RewindLinkedList getNext() {
+    public LesseeRewindLinkedList getNext() {
         return next;
     }
     
     //Deletes the element at the beginning of the list
     public void removeFirst(){
-        RewindLinkedList cur=new RewindLinkedList(this.value, prev, next);
+        LesseeRewindLinkedList cur=new LesseeRewindLinkedList(this.value, prev, next);
         while (cur.getPrev().getPrev()!=null){
             cur=cur.getPrev();
         }
@@ -87,7 +87,7 @@ public class RewindLinkedList {
     *Returns the number of nodes in the linked list by starting out from the current block and counting all previous and following blocks
     */
     public int getListSize(){
-        RewindLinkedList cur=new RewindLinkedList(value, prev, next), cur1=cur.getPrev(), cur2=cur.getNext();
+        LesseeRewindLinkedList cur=new LesseeRewindLinkedList(value, prev, next), cur1=cur.getPrev(), cur2=cur.getNext();
         int otherNodes=0;
         
         if (cur1!=null){

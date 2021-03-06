@@ -8,21 +8,21 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml_internalassessment.InputSceneController">
    <children>
-      <Button fx:id="addButton" layoutX="59.0" layoutY="200.0" mnemonicParsing="false" onAction="#addButtonAction" text="Add" />
-      <Button fx:id="backButton" layoutX="59.0" layoutY="334.0" mnemonicParsing="false" onAction="#HandleChangeScene" text="Back" />
+      <Button fx:id="addButton" layoutX="59.0" layoutY="200.0" mnemonicParsing="false" onAction="#addButtonAction" text="Hozzáadás" />
+      <Button fx:id="backButton" layoutX="71.0" layoutY="335.0" mnemonicParsing="false" onAction="#HandleChangeScene" text="Vissza" />
       <Label layoutX="210.0" layoutY="77.0" text="Dátum:" />
       <Label layoutX="210.0" layoutY="130.0" text="Mennyiség:" />
       <Label layoutX="210.0" layoutY="184.0" prefHeight="17.0" prefWidth="64.0" text="Típus" />
-      <TextField fx:id="dateTextField" layoutX="300.0" layoutY="73.0" />
-      <TextField fx:id="amountTextField" layoutX="300.0" layoutY="126.0" />
-      <TextField fx:id="typeTextField" layoutX="300.0" layoutY="180.0" />
+      <TextField fx:id="dateTextField" layoutX="300.0" layoutY="73.0" promptText="éééé-hh-nn" />
+      <TextField fx:id="amountTextField" layoutX="300.0" layoutY="126.0" promptText="csak számokat adj meg" />
+      <TextField fx:id="typeTextField" layoutX="300.0" layoutY="180.0" promptText="saját belátás szerint" />
       <Label fx:id="Label" layoutX="250.0" layoutY="322.0" prefHeight="25.0" prefWidth="100.0">
          <font>
             <Font size="13.0" />
          </font></Label>
       <Label layoutX="210.0" layoutY="229.0" prefHeight="17.0" prefWidth="64.0" text="Fizette:" />
-      <TextField fx:id="paidByTextField1" layoutX="300.0" layoutY="225.0" />
+      <TextField fx:id="paidByTextField1" layoutX="300.0" layoutY="225.0" promptText="személy vagy szervezet" />
       <Label layoutX="210.0" layoutY="275.0" prefHeight="17.0" prefWidth="64.0" text="Komment:" />
-      <TextField fx:id="commentTextField" layoutX="300.0" layoutY="271.0" />
+      <TextField fx:id="commentTextField" layoutX="300.0" layoutY="271.0" promptText="bármi egyéb" />
    </children>
 </AnchorPane>

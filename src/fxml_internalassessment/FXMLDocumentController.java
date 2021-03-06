@@ -122,7 +122,7 @@ public class FXMLDocumentController implements Initializable {
         });
         
         //Loads the elements of Entries into the table
-        FXML_InternalAssessment.getEntries().forEach((p) ->{
+        Main.Entries.forEach((p) ->{
             table.getItems().add(p);
         });
         
@@ -131,7 +131,7 @@ public class FXMLDocumentController implements Initializable {
             Entry selectedItem=table.getSelectionModel().getSelectedItem();
             table.getItems().remove(selectedItem);
             update();
-            MessageLabel.setText("Row deleted successfully!");
+            MessageLabel.setText("Sor sikeresen törölve!");
         });
     }    
 
@@ -157,12 +157,9 @@ public class FXMLDocumentController implements Initializable {
         Entry selectedItem=table.getSelectionModel().getSelectedItem();
          try{
             FXMLLoader loader=new FXMLLoader();
-            loader.setLocation(getClass().getResource("DetailedScene.fxml"));
+            loader.setLocation(getClass().getResource("LesseeList.fxml"));
             Parent TableViewParent=loader.load();
             Scene newPersonScene=new Scene(TableViewParent);
-            
-            DetailedSceneController controller= loader.getController();
-            controller.initData(selectedItem);
                     
             Stage window=(Stage)((Node)event.getSource()).getScene().getWindow();
             window.setScene(newPersonScene);
@@ -178,7 +175,7 @@ public class FXMLDocumentController implements Initializable {
    //At adding a new element, at deleting or modifying an already existing element 
     public void update(){
 //        MessageLabel.setText("Update method used");
-        FXML_InternalAssessment app=new FXML_InternalAssessment();
+        Main app=new Main();
         JSONArray array=new JSONArray();
         ArrayList<Entry> entries2=new ArrayList<>();
         //Collects the contents of the table into a list
@@ -215,9 +212,9 @@ public class FXMLDocumentController implements Initializable {
         table.getItems().forEach(p ->{
             newNode.add(p);
         });
-        app.currentNode.setNext(newNode);
-        app.currentNode=app.currentNode.getNext();
-        if (app.currentNode.getListSize()>5) app.currentNode.removeFirst();
+        Main.currentNode.setNext(newNode);
+        Main.currentNode=Main.currentNode.getNext();
+        if (Main.currentNode.getListSize()>5) Main.currentNode.removeFirst();
     }
 
     @FXML
@@ -240,7 +237,7 @@ public class FXMLDocumentController implements Initializable {
             ins.close();
             outs.close();
             
-            MessageLabel.setText("File saved successfully!");
+            MessageLabel.setText("Változtatások mentve!");
         }
         
         catch(FileNotFoundException e){
@@ -265,14 +262,13 @@ public class FXMLDocumentController implements Initializable {
     *Method is called when the "Rewind" button is pressed. It reverts the table to it's previous state, just before the latest modification
     * */
     private void HandleRewindAction(ActionEvent event) {
-        FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
         
-        if (app.currentNode.getPrev()!=null) app.currentNode=app.currentNode.getPrev();
+        if (Main.currentNode.getPrev()!=null) Main.currentNode=Main.currentNode.getPrev();
         else return;
-        app.Entries=app.currentNode.getValueDeep();
+        Main.Entries=Main.currentNode.getValueDeep();
         
-        app.Entries.forEach((p) -> {
+        Main.Entries.forEach((p) -> {
             JSONObject obj1= new JSONObject();
             obj1.put("Date", p.getDate());
             obj1.put("Type", p.getType());
@@ -293,7 +289,7 @@ public class FXMLDocumentController implements Initializable {
              file.flush();
              
             table.getItems().removeAll(table.getItems());
-            app.Entries.forEach((p) ->{
+            Main.Entries.forEach((p) ->{
                 table.getItems().add(p);
             });
             table.refresh();
@@ -309,14 +305,13 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void HandleForwardAction(ActionEvent event) {
-        FXML_InternalAssessment app=new FXML_InternalAssessment();
         JSONArray array=new JSONArray();
         
-        if (app.currentNode.getNext()!=null) app.currentNode=app.currentNode.getNext();
+        if (Main.currentNode.getNext()!=null) Main.currentNode=Main.currentNode.getNext();
         else return;
-        app.Entries=app.currentNode.getValueDeep();
+        Main.Entries=Main.currentNode.getValueDeep();
         
-        app.Entries.forEach((p) -> {
+        Main.Entries.forEach((p) -> {
             JSONObject obj1= new JSONObject();
             obj1.put("Date", p.getDate());
             obj1.put("Type", p.getType());
@@ -337,7 +332,7 @@ public class FXMLDocumentController implements Initializable {
              file.flush();
              
             table.getItems().removeAll(table.getItems());
-            app.Entries.forEach((p) ->{
+            Main.Entries.forEach((p) ->{
                 table.getItems().add(p);
             });
             table.refresh();

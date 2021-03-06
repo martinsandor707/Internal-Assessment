@@ -3,10 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -29,41 +25,16 @@
             <Font size="17.0" />
          </font>
       </Label>
-      <Label fx:id="SpreadsheetLabel" layoutX="389.0" layoutY="-1.0" text="SPREADSHEET NAME">
+      <Label fx:id="SpreadsheetLabel" layoutX="424.0" text="TÁBLÁZAT">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="138.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" text="New" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Save" />
-                  <MenuItem mnemonicParsing="false" text="Save as..." />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Open" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
       <ButtonBar layoutX="639.0" prefHeight="30.0" prefWidth="369.0">
         <buttons>
             <Button fx:id="DetailedButton" mnemonicParsing="false" onAction="#HandleChangeScene2" text="Bérlők" />
-            <Button mnemonicParsing="false" text="Segítség" />
-          <Button mnemonicParsing="false" onAction="#HandleRewindAction" text="Vissza" />
-            <Button mnemonicParsing="false" onAction="#HandleForwardAction" text="Előre" />
+          <Button mnemonicParsing="false" onAction="#HandleRewindAction" text="Mégse" />
+            <Button mnemonicParsing="false" onAction="#HandleForwardAction" text="Mégis" />
         </buttons>
       </ButtonBar>
       <Label fx:id="MessageLabel" layoutX="435.0" layoutY="608.0">
@@ -73,6 +44,7 @@
       </Label>
       <Button fx:id="ChangeSceneButton" layoutX="53.0" layoutY="547.0" onAction="#HandleChangeScene" text="Új elem" />
       <Button fx:id="DeleteButton" layoutX="781.0" layoutY="547.0" text="Sor törlése" />
-      <Button fx:id="SaveButton" layoutX="138.0" layoutY="2.0" onAction="#HandleSaveData" text="Mentés" />
+      <Button fx:id="SaveButton" layoutX="7.0" layoutY="2.0" onAction="#HandleSaveData" text="Mentés" />
+      <Button layoutX="70.0" layoutY="2.0" mnemonicParsing="false" text="Segítség" />
     </children>
 </AnchorPane>

@@ -40,35 +40,20 @@ import org.json.simple.parser.ParseException;
  *
  * @author nando
  */
-public class FXML_InternalAssessment extends Application {
+public class Main extends Application {
     //The current state of the database
   public static ArrayList<Entry> Entries;
+  public static ArrayList<Lessee> LesseeList;
   //Used for the "rewind" and "fast forward" functions
   public static RewindLinkedList currentNode;
-
-  FXMLDocumentController app=new FXMLDocumentController();
-  
-
-    public static void setEntries(ArrayList<Entry> Entries) {
-        FXML_InternalAssessment.Entries = Entries;
-    }
-
-    public static List<Entry> getEntries() {
-        return Entries;
-    }
-    
-    public static void setCurrentNode(RewindLinkedList currentNode) {
-        currentNode = currentNode;
-    }
-
-    public static RewindLinkedList getCurrentNode() {
-        return currentNode;
-    }
+  public static LesseeRewindLinkedList currentLesseeNode;
     
     @Override
     public void start(Stage stage) throws Exception {
         Entries=new ArrayList<>();
+        LesseeList=new ArrayList<>();
         JSONParser parser=new JSONParser();
+        JSONParser parser2=new JSONParser();
         
         try{
             //Reads all elements from the json database and parses it into Entries for later use
@@ -79,6 +64,14 @@ public class FXML_InternalAssessment extends Application {
             FileWriter file=new FileWriter("OutputTemporary.json");
             file.write(jsonArray.toJSONString());
             file.flush();
+            //Do the same for the list of lessees
+            Object obj2= parser2.parse(new FileReader("LesseeList.json"));
+            JSONArray jsonArray2=(JSONArray)obj2;            
+            jsonArray2.forEach(p ->parseLesseeObj((JSONObject)p));
+
+            FileWriter file2=new FileWriter("LesseeListTemporary.json");
+            file2.write(jsonArray.toJSONString());
+            file2.flush();
         
         }
         catch(FileNotFoundException e){
@@ -95,6 +88,7 @@ public class FXML_InternalAssessment extends Application {
         }
         
         currentNode=new RewindLinkedList(Entries, null, null);
+        currentLesseeNode=new LesseeRewindLinkedList(LesseeList, null, null);
         
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
         
@@ -119,8 +113,11 @@ public class FXML_InternalAssessment extends Application {
         
         try{
             File temp=new File("OutputTemporary.json");
+            File temp2=new File("LesseeListTemporary.json");
             Path path= Paths.get(temp.getAbsolutePath());
+            Path path2= Paths.get(temp2.getAbsolutePath());
             Files.deleteIfExists(path);
+            Files.deleteIfExists(path2);
         }
 
         catch(DirectoryNotEmptyException e){
@@ -140,26 +137,28 @@ public class FXML_InternalAssessment extends Application {
         Stage popupwindow=new Stage();
 
         popupwindow.initModality(Modality.APPLICATION_MODAL);
-        popupwindow.setTitle("This is a pop up window");
+        popupwindow.setTitle("Figyelmeztetés");
 
         //Warning message
-        Label label1= new Label("You haven't saved your changes! \nDo you want to save before exiting?");
+        Label label1= new Label("Nem mentetted el a változtatásaidat! \nAkarsz menteni mielőtt kilépnél?");
         label1.setAlignment(Pos.CENTER);
 
         //Yes, No and Cancel Buttons
-        Button buttonNo= new Button("No");   
+        Button buttonNo= new Button("Nem");   
         buttonNo.setOnAction(e -> popupwindow.close());
         
         //Invokes FXMLDocumentController's HandleSaveData method before closing the entire application
-        Button buttonYes=new Button("Yes");
+        Button buttonYes=new Button("Igen");
         buttonYes.setOnAction(e ->{
             
             FXMLDocumentController app=new FXMLDocumentController();
+            LesseeListController app2=new LesseeListController();
             app.HandleSaveData(e);
+            app2.SaveButtonAction(e);
             popupwindow.close();
         });
         //Consumes the event, therefore the application will not close
-        Button buttonCancel=new Button("Cancel");
+        Button buttonCancel=new Button("Mégse");
         buttonCancel.setOnAction(e -> {
             event.consume();
             popupwindow.close();
@@ -210,21 +209,41 @@ public class FXML_InternalAssessment extends Application {
         System.out.println("Third line of ParseEntry");
         Entries.add(p1);
     }
+    //Used after the elements of LesseeList.json are contained in a JSONArray
+    private void parseLesseeObj(JSONObject p){
+        JSONObject userObj = (JSONObject)p.get("Lessee");
+        Lessee p1=new Lessee();
+        
+        p1.setName((String)userObj.get("Name"));
+        
+        p1.setAddress((String)userObj.get("Address"));
+        p1.setPhone_number((String)userObj.get("Phone_number"));
+        p1.setEmail((String)userObj.get("Email"));
+        p1.setComments((String)userObj.get("Comments"));
+        LesseeList.add(p1);
+    }
+    
+    
     /**
     *Checks the contents of Output.json and OutputTemporary.json and returns true if their content is identical, false otherwise
     * */
     private boolean isSameContent(){
         try{
-            //initializing variables referring to the two databases
+            //initializing variables referring to the two permanent and temporary databases
             File file1=new File("Output.json");
             File file2=new File("OutputTemporary.json");
+            File file3=new File("LesseeList.json");
+            File file4=new File("LesseeListTemporary.json");
             //Reading their contents byte-by-byte into an array of bytes
             byte[] f1=Files.readAllBytes(file1.toPath());
             byte[] f2=Files.readAllBytes(file2.toPath());
+            byte[] f3=Files.readAllBytes(file3.toPath());
+            byte[] f4=Files.readAllBytes(file4.toPath());
             //Checks whether their contents are exactly the same
-            boolean isTwoEqual=Arrays.equals(f1, f2);
+            boolean isArrayEqual=Arrays.equals(f1, f2);
+            boolean isLesseeListEqual=Arrays.equals(f3, f4);
             
-            return isTwoEqual;
+            if (isArrayEqual==true && isLesseeListEqual==true) return true;
         }
         catch (IOException e){
             e.printStackTrace();
