@@ -12,8 +12,13 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
@@ -42,6 +48,12 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TableView<Entry> table;
     @FXML
+    private TextField FilterTextField;
+    @FXML
+    private TextField FromRow;
+    @FXML
+    private TextField ToRow;
+    @FXML
     private TableColumn<Entry, String> Date;
     @FXML
     private TableColumn<Entry, String> Type;
@@ -52,32 +64,37 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private TableColumn<Entry, Integer> Amount;
     @FXML
+    private TableColumn<Entry, Integer> Row;
+    @FXML
     private Button DeleteButton;
     @FXML
-    private Button DetailedButton;
-    @FXML
-    private Button SaveButton;
-    @FXML
     private Label MessageLabel;
-    @FXML
-    private Button CalculationsButton;
     @FXML
     private Label MenuLabel;
     @FXML
     private Label SpreadsheetLabel;
     @FXML
     private Button ChangeSceneButton;
-    //Required by Adress to convert the user's input from String to Integer
+    //Required by Amount to convert the user's input from String to Integer
     IntegerStringConverter converter=new IntegerStringConverter();
+    
+    String dummy="";
+    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        //Placeholder message for an empty table is set
+        Label lb=new Label();
+        lb.setText("A táblázat vagy üres vagy a keresés nem talált semmit.");
+        table.setPlaceholder(lb);
         //All columns are initialized
         Date.setCellValueFactory(new PropertyValueFactory<>("Date"));
         Type.setCellValueFactory(new PropertyValueFactory<>("Type"));
         Paid_by.setCellValueFactory(new PropertyValueFactory<>("Paid_by"));
         Comment.setCellValueFactory(new PropertyValueFactory<>("Comment"));
         Amount.setCellValueFactory(new PropertyValueFactory<>("Amount"));
+        Row.setCellValueFactory(new PropertyValueFactory<>("Row"));
         table.setEditable(true);
         
         //Makes the given column editable
@@ -86,7 +103,10 @@ public class FXMLDocumentController implements Initializable {
         ((Entry)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setDate(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Type.setCellFactory(TextFieldTableCell.forTableColumn()); 
@@ -94,7 +114,10 @@ public class FXMLDocumentController implements Initializable {
         ((Entry)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setType(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Paid_by.setCellFactory(TextFieldTableCell.forTableColumn()); 
@@ -102,7 +125,10 @@ public class FXMLDocumentController implements Initializable {
         ((Entry)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setPaid_by(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Comment.setCellFactory(TextFieldTableCell.forTableColumn()); 
@@ -110,7 +136,10 @@ public class FXMLDocumentController implements Initializable {
         ((Entry)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setComment(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Amount.setCellFactory(TextFieldTableCell.forTableColumn(converter)); 
@@ -118,21 +147,57 @@ public class FXMLDocumentController implements Initializable {
         ((Entry)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setAmount(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         //Loads the elements of Entries into the table
         Main.Entries.forEach((p) ->{
             table.getItems().add(p);
         });
-        
         //Delete button functionality
         DeleteButton.setOnAction(e -> {
             Entry selectedItem=table.getSelectionModel().getSelectedItem();
             table.getItems().remove(selectedItem);
+            dummy=FilterTextField.getText();
+            FilterTextField.setText("");
             update();
-            MessageLabel.setText("Sor sikeresen törölve!");
+            FilterTextField.setText(dummy);
         });
+        
+        //Wrap the ObservableList in a FilteredList (initially display all data)
+        FilteredList<Entry> filteredData=new FilteredList<>(table.getItems(), b-> true);
+        //2. Set the filter Predicate whenever the filter changes
+        FilterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(entry -> {
+                
+                //If filter text is empty, display all entries
+                if (newValue == null || newValue.isEmpty()) return true;
+                
+                String lowerCaseFilter=newValue.toLowerCase();
+                
+                //Compare the contents of the date, type, paid_by and comment columns to the filter text
+                if (entry.getDate().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
+                else if (entry.getType().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (String.valueOf(entry.getAmount()).toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (entry.getPaid_by().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (entry.getComment().toLowerCase().contains(lowerCaseFilter)) return true;
+                return false; //Does not match
+            });
+        });
+        
+        //3. Wrap the FilteredList in a SortedList
+        SortedList<Entry> sortedData=new SortedList<>(filteredData);
+        
+        //4. Bind the SortedList comparator to the TableView comparator. Otherwise, sorting the TableView would have no effect.
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+        
+        //5. Add sorted and filtered data to the table
+        table.setItems(sortedData);
+        
+        
     }    
 
     //Changes scene to InputScene.fxml
@@ -174,8 +239,6 @@ public class FXMLDocumentController implements Initializable {
    //This method is called every time the contents of the table are manipulated:
    //At adding a new element, at deleting or modifying an already existing element 
     public void update(){
-//        MessageLabel.setText("Update method used");
-        Main app=new Main();
         JSONArray array=new JSONArray();
         ArrayList<Entry> entries2=new ArrayList<>();
         //Collects the contents of the table into a list
@@ -183,14 +246,15 @@ public class FXMLDocumentController implements Initializable {
             entries2.add(p);
         });
         //updates database to have the elements corresponding with the table
-        app.Entries=entries2;
-        app.Entries.forEach((p) -> {
+        Main.Entries=entries2;
+        Main.Entries.forEach((p) -> {
             JSONObject obj1= new JSONObject();
             obj1.put("Date", p.getDate());
             obj1.put("Type", p.getType());
             obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
             obj1.put("Amount", p.getAmount());
+            obj1.put("Row", p.getRow());
 
             JSONObject o1= new JSONObject();
             o1.put("Entry", obj1);
@@ -253,9 +317,6 @@ public class FXMLDocumentController implements Initializable {
     
 }
 
-    @FXML
-    private void handleButtonAction(ActionEvent event) {
-    }
 
     @FXML
     /**
@@ -275,6 +336,7 @@ public class FXMLDocumentController implements Initializable {
             obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
             obj1.put("Amount", p.getAmount());
+            obj1.put("Row", p.getRow());
 
             JSONObject o1= new JSONObject();
             o1.put("Entry", obj1);
@@ -287,11 +349,8 @@ public class FXMLDocumentController implements Initializable {
         try(FileWriter file=new FileWriter("OutputTemporary.json")){
              file.write(array.toJSONString());
              file.flush();
-             
-            table.getItems().removeAll(table.getItems());
-            Main.Entries.forEach((p) ->{
-                table.getItems().add(p);
-            });
+            ObservableList list=FXCollections.observableArrayList(Main.Entries);
+            table.setItems(list);
             table.refresh();
         }
         
@@ -318,6 +377,7 @@ public class FXMLDocumentController implements Initializable {
             obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
             obj1.put("Amount", p.getAmount());
+            obj1.put("Row", p.getRow());
 
             JSONObject o1= new JSONObject();
             o1.put("Entry", obj1);
@@ -331,10 +391,8 @@ public class FXMLDocumentController implements Initializable {
              file.write(array.toJSONString());
              file.flush();
              
-            table.getItems().removeAll(table.getItems());
-            Main.Entries.forEach((p) ->{
-                table.getItems().add(p);
-            });
+            ObservableList list=FXCollections.observableArrayList(Main.Entries);
+            table.setItems(list);
             table.refresh();
         }
         
@@ -344,6 +402,51 @@ public class FXMLDocumentController implements Initializable {
         catch (NullPointerException e){
             e.printStackTrace();
         }        
+    }
+
+    @FXML
+    private void Summation(ActionEvent event) {
+        try{
+            int sum=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText());
+            System.out.println("Sup");
+            Entry cur;
+            for (int i = start-1; i < end; i++) {
+                cur=Main.Entries.get(i);
+                sum=sum+cur.getAmount();
+            }
+            Entry newEntry=new Entry(LocalDate.now().toString(),"Összesítés:"+start+"-"+end,"-----","",sum,Main.Entries.size()+1);
+            Main.Entries.add(newEntry);
+            ObservableList list=FXCollections.observableArrayList(Main.Entries);
+            table.setItems(list);
+            table.refresh();
+            }
+            catch(NumberFormatException e){
+                MessageLabel.setText("Kérlek a számítási mezőkbe csak számokat adj meg!");
+                System.err.println("Number format exception!");
+            }
+    }
+
+    @FXML
+    private void Averaging(ActionEvent event) {
+        try{
+            int avg=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText()), count=0;
+            Entry cur;
+            for (int i = start-1; i < end; i++) {
+                cur=Main.Entries.get(i);
+                avg=avg+cur.getAmount();
+                count++;
+            }
+            avg=avg/count;
+            Entry newEntry=new Entry(LocalDate.now().toString(),"Átlag:"+start+"-"+end,"-----","",avg,Main.Entries.size()+1);
+            Main.Entries.add(newEntry);
+            ObservableList list=FXCollections.observableArrayList(Main.Entries);
+            table.setItems(list);
+            table.refresh();
+        }
+        catch(NumberFormatException e){
+            MessageLabel.setText("Kérlek a számítási mezőkbe csak számokat adj meg!");
+            e.printStackTrace();
+        }
     }
     
 }

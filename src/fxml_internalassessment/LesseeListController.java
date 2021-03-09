@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
@@ -51,7 +56,8 @@ public class LesseeListController implements Initializable {
     private Button RewindButton;
     @FXML
     private Button ForwardButton;
-    
+    @FXML
+    private TextField FilterTextField;
     @FXML
     private TableView<Lessee> Table;
     @FXML
@@ -66,7 +72,8 @@ public class LesseeListController implements Initializable {
     private TableColumn<Lessee, String> Comments;
     @FXML
     private Label MessageLabel;
-
+    
+    String dummy;
     
 
     
@@ -91,7 +98,10 @@ public class LesseeListController implements Initializable {
         ((Lessee)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setName(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Address.setCellFactory(TextFieldTableCell.forTableColumn()); 
@@ -99,7 +109,10 @@ public class LesseeListController implements Initializable {
         ((Lessee)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setAddress(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Phone_number.setCellFactory(TextFieldTableCell.forTableColumn()); 
@@ -107,7 +120,10 @@ public class LesseeListController implements Initializable {
         ((Lessee)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setPhone_number(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Email.setCellFactory(TextFieldTableCell.forTableColumn()); 
@@ -115,7 +131,10 @@ public class LesseeListController implements Initializable {
         ((Lessee)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setEmail(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         Comments.setCellFactory(TextFieldTableCell.forTableColumn()); 
@@ -123,7 +142,10 @@ public class LesseeListController implements Initializable {
         ((Lessee)t.getTableView().getItems().get(
                 t.getTablePosition().getRow())
                 ).setComments(t.getNewValue());
+                dummy=FilterTextField.getText();
+                FilterTextField.setText("");
                 update();
+                FilterTextField.setText(dummy);
         });
         
         //Loads the elements of Entries into the table
@@ -137,6 +159,37 @@ public class LesseeListController implements Initializable {
             Table.getItems().remove(selectedItem);
             update();
         });
+        
+        
+        //Wrap the ObservableList in a FilteredList (initially display all data)
+        FilteredList<Lessee> filteredData=new FilteredList<>(Table.getItems(), b-> true);
+        //2. Set the filter Predicate whenever the filter changes
+        FilterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(lessee -> {
+                
+                //If filter text is empty, display all entries
+                if (newValue == null || newValue.isEmpty()) return true;
+                
+                String lowerCaseFilter=newValue.toLowerCase();
+                
+                //Compare the contents of the date, type, paid_by and comment columns to the filter text
+                if (lessee.getName().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
+                else if (lessee.getAddress().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (lessee.getPhone_number().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (lessee.getEmail().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (lessee.getComments().toLowerCase().contains(lowerCaseFilter)) return true;
+                return false; //Does not match
+            });
+        });
+        
+        //3. Wrap the FilteredList in a SortedList
+        SortedList<Lessee> sortedData=new SortedList<>(filteredData);
+        
+        //4. Bind the SortedList comparator to the TableView comparator. Otherwise, sorting the TableView would have no effect.
+        sortedData.comparatorProperty().bind(Table.comparatorProperty());
+        
+        //5. Add sorted and filtered data to the table
+        Table.setItems(sortedData);
         
     }    
 
@@ -242,10 +295,8 @@ public class LesseeListController implements Initializable {
              file.write(array.toJSONString());
              file.flush();
              
-            Table.getItems().removeAll(Table.getItems());
-            Main.LesseeList.forEach((p) ->{
-                Table.getItems().add(p);
-            });
+            ObservableList list=FXCollections.observableArrayList(Main.Entries);
+            Table.setItems(list);
             Table.refresh();
         }
         
@@ -286,10 +337,8 @@ public class LesseeListController implements Initializable {
              file.write(array.toJSONString());
              file.flush();
              
-            Table.getItems().removeAll(Table.getItems());
-            Main.LesseeList.forEach((p) ->{
-                Table.getItems().add(p);
-            });
+            ObservableList list=FXCollections.observableArrayList(Main.Entries);
+            Table.setItems(list);
             Table.refresh();
         }
         

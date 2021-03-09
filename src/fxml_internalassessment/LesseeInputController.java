@@ -63,7 +63,7 @@ public class LesseeInputController implements Initializable {
         
         JSONArray array=new JSONArray();
         
-        Label.setText("Input successful");
+        Label.setText("Új elem sikeresen hozzáadva!");
         Name.setText("");
         Address.setText("");
         Phone_number.setText("");

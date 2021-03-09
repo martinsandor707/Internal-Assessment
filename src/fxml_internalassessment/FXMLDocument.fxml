@@ -5,22 +5,24 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="648.0" prefWidth="1008.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml_internalassessment.FXMLDocumentController">
     <children>
-        <Button fx:id="CalculationsButton" layoutX="443.0" layoutY="547.0" onAction="#handleButtonAction" text="Számítások" />
+        <Button layoutX="835.0" layoutY="523.0" onAction="#Summation" text="Összegzés" />
       <TableView fx:id="table" layoutY="27.0" prefHeight="448.0" prefWidth="1008.0">
         <columns>
-          <TableColumn fx:id="Date" prefWidth="123.0" text="Dátum" />
-          <TableColumn fx:id="Amount" prefWidth="129.0" text="Költség" />
-            <TableColumn fx:id="Type" prefWidth="143.0" text="Típus" />
-            <TableColumn fx:id="Paid_by" prefWidth="168.0" text="Fizette" />
-            <TableColumn fx:id="Comment" prefWidth="442.0" text="Komment" />
+            <TableColumn fx:id="Row" prefWidth="37.0" text="Sor" />
+          <TableColumn fx:id="Date" prefWidth="118.0" text="Dátum" />
+          <TableColumn fx:id="Amount" prefWidth="115.0" text="Költség" />
+            <TableColumn fx:id="Type" prefWidth="161.0" text="Típus" />
+            <TableColumn fx:id="Paid_by" prefWidth="150.0" text="Fizette" />
+            <TableColumn fx:id="Comment" prefWidth="425.0" text="Komment" />
         </columns>
       </TableView>
-      <Label fx:id="MenuLabel" layoutX="435.0" layoutY="475.0" text="FŐMENÜ">
+      <Label fx:id="MenuLabel" layoutX="746.0" layoutY="475.0" text="Számolások">
          <font>
             <Font size="17.0" />
          </font>
@@ -32,7 +34,7 @@
       </Label>
       <ButtonBar layoutX="639.0" prefHeight="30.0" prefWidth="369.0">
         <buttons>
-            <Button fx:id="DetailedButton" mnemonicParsing="false" onAction="#HandleChangeScene2" text="Bérlők" />
+            <Button mnemonicParsing="false" onAction="#HandleChangeScene2" text="Bérlők" />
           <Button mnemonicParsing="false" onAction="#HandleRewindAction" text="Mégse" />
             <Button mnemonicParsing="false" onAction="#HandleForwardAction" text="Mégis" />
         </buttons>
@@ -42,9 +44,15 @@
             <Font size="17.0" />
          </font>
       </Label>
-      <Button fx:id="ChangeSceneButton" layoutX="53.0" layoutY="547.0" onAction="#HandleChangeScene" text="Új elem" />
-      <Button fx:id="DeleteButton" layoutX="781.0" layoutY="547.0" text="Sor törlése" />
-      <Button fx:id="SaveButton" layoutX="7.0" layoutY="2.0" onAction="#HandleSaveData" text="Mentés" />
-      <Button layoutX="70.0" layoutY="2.0" mnemonicParsing="false" text="Segítség" />
+      <Button fx:id="ChangeSceneButton" layoutX="50.0" layoutY="501.0" onAction="#HandleChangeScene" text="Új elem" />
+      <Button fx:id="DeleteButton" layoutX="42.0" layoutY="565.0" text="Sor törlése" />
+      <Button layoutX="7.0" layoutY="2.0" onAction="#HandleSaveData" text="Mentés" />
+      <Label layoutX="132.0" layoutY="539.0" text="Keresés:" />
+      <TextField fx:id="FilterTextField" layoutX="191.0" layoutY="535.0" />
+      <Label layoutX="626.0" layoutY="529.0" text="Ettől a sortól" />
+      <TextField fx:id="FromRow" layoutX="711.0" layoutY="527.0" prefHeight="25.0" prefWidth="76.0" />
+      <Label layoutX="625.0" layoutY="567.0" text="Eddig a sorig" />
+      <TextField fx:id="ToRow" layoutX="711.0" layoutY="565.0" prefHeight="25.0" prefWidth="76.0" />
+      <Button layoutX="835.0" layoutY="563.0" onAction="#Averaging" text="Átlagolás" />
     </children>
 </AnchorPane>

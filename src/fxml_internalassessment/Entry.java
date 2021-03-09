@@ -12,7 +12,7 @@ package fxml_internalassessment;
 public class Entry {
     
     String date, type, paid_by, comment;
-    int amount;
+    int amount, row;
 
     public String getDate() {
         return date;
@@ -32,6 +32,10 @@ public class Entry {
 
     public int getAmount() {
         return amount;
+    }
+    
+    public int getRow() {
+        return row;
     }
 
     public void setDate(String date) {
@@ -53,13 +57,18 @@ public class Entry {
     public void setAmount(int amount) {
         this.amount = amount;
     }
+    
+    public void setRow(int row) {
+        this.row = row;
+    }
 
-    public Entry(String date, String type, String paid_by, String comment, int amount) {
+    public Entry(String date, String type, String paid_by, String comment, int amount, int row) {
         this.date = date;
         this.type = type;
         this.paid_by = paid_by;
         this.comment = comment;
         this.amount = amount;
+        this.row = row;
     }
 
 
@@ -71,6 +80,7 @@ public class Entry {
         this.paid_by = entry.paid_by;
         this.comment = entry.comment;
         this.amount = entry.amount;
+        this.row = entry.row;
     }
     public Entry() {
         this.date = null;
@@ -78,10 +88,11 @@ public class Entry {
         this.paid_by = null;
         this.comment = null;
         this.amount = 0;
+        this.row = 0;
     }
     @Override
     public String toString(){
-        return "Date: "+date+" Amount: "+amount+" Type: "+type+" Paid by: "+paid_by+" Comment: "+comment;
+        return "Row: "+row+" Date: "+date+" Amount: "+amount+" Type: "+type+" Paid by: "+paid_by+" Comment: "+comment;
     }
     
     

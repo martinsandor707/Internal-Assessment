@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,10 +14,9 @@
       <Label layoutX="210.0" layoutY="77.0" text="Dátum:" />
       <Label layoutX="210.0" layoutY="130.0" text="Mennyiség:" />
       <Label layoutX="210.0" layoutY="184.0" prefHeight="17.0" prefWidth="64.0" text="Típus" />
-      <TextField fx:id="dateTextField" layoutX="300.0" layoutY="73.0" promptText="éééé-hh-nn" />
       <TextField fx:id="amountTextField" layoutX="300.0" layoutY="126.0" promptText="csak számokat adj meg" />
       <TextField fx:id="typeTextField" layoutX="300.0" layoutY="180.0" promptText="saját belátás szerint" />
-      <Label fx:id="Label" layoutX="250.0" layoutY="322.0" prefHeight="25.0" prefWidth="100.0">
+      <Label fx:id="Label" layoutX="168.0" layoutY="322.0" prefHeight="25.0" prefWidth="385.0">
          <font>
             <Font size="13.0" />
          </font></Label>
@@ -24,5 +24,7 @@
       <TextField fx:id="paidByTextField1" layoutX="300.0" layoutY="225.0" promptText="személy vagy szervezet" />
       <Label layoutX="210.0" layoutY="275.0" prefHeight="17.0" prefWidth="64.0" text="Komment:" />
       <TextField fx:id="commentTextField" layoutX="300.0" layoutY="271.0" promptText="bármi egyéb" />
+      <DatePicker fx:id="dateTextField" editable="false" layoutX="300.0" layoutY="73.0" promptText="éééé.hh.nn" />
+      <Label layoutX="172.0" layoutY="32.0" text="A dátum megadásánál kérlek használd a jobb oldali gombot!" />
    </children>
 </AnchorPane>

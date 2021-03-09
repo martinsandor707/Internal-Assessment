@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -28,7 +29,9 @@
       <Button fx:id="DeleteButton" layoutX="528.0" layoutY="361.0" mnemonicParsing="false" text="Kiválasztott elem törlése" />
       <Button fx:id="RewindButton" layoutX="917.0" layoutY="17.0" mnemonicParsing="false" onAction="#HandleRewindAction" text="Mégse" />
       <Button fx:id="ForwardButton" layoutX="1030.0" layoutY="17.0" mnemonicParsing="false" onAction="#HandleForwardAction" text="Mégis" />
-      <Button layoutX="232.0" layoutY="17.0" mnemonicParsing="false" onAction="#SaveButtonAction" text="Mentés" />
+      <Button layoutX="246.0" layoutY="361.0" mnemonicParsing="false" onAction="#SaveButtonAction" text="Mentés" />
       <Label fx:id="MessageLabel" layoutX="246.0" layoutY="365.0" />
+      <Label layoutX="74.0" layoutY="21.0" text="Keresés:" />
+      <TextField fx:id="FilterTextField" layoutX="138.0" layoutY="17.0" />
    </children>
 </AnchorPane>

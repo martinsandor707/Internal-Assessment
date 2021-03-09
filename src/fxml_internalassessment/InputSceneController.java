@@ -7,7 +7,9 @@ package fxml_internalassessment;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -19,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -38,7 +41,7 @@ public class InputSceneController implements Initializable {
     private Button backButton;
 
     @FXML
-    private TextField dateTextField;
+    private DatePicker dateTextField;
     @FXML
     private TextField typeTextField;
     @FXML
@@ -61,13 +64,26 @@ public class InputSceneController implements Initializable {
     @FXML
     //Add the contents of the TextFields to the database
     private void addButtonAction(ActionEvent event) {
-        Entry input=new Entry(dateTextField.getText(), typeTextField.getText(), paidByTextField1.getText(), commentTextField.getText(), Integer.parseInt(amountTextField.getText()));
+        try{
+          LocalDate ld=dateTextField.getValue();
+            System.out.println(amountTextField.getText());
+        Entry input=new Entry(ld.toString(), typeTextField.getText(), paidByTextField1.getText(), commentTextField.getText(), Integer.parseInt(amountTextField.getText()), (Main.Entries.size()+1));
         Main.Entries.add(input);
+        Label.setText("Új elem sikeresen hozzáadva!");
+        }
+        catch(NumberFormatException e){
+            Label.setText("Kérlek a mennyiség mezőbe csak számokat adj meg!");
+            e.printStackTrace();
+        }
+        catch(NullPointerException e){
+            Label.setText("Kérlek töltsd ki az összes mezőt!");
+            e.printStackTrace();
+        }
         
         JSONArray array=new JSONArray();
         
-        Label.setText("Input successful");
-        dateTextField.setText("");
+        
+        dateTextField.setValue(LocalDate.now());
         typeTextField.setText("");
         paidByTextField1.setText("");
         commentTextField.setText("");
@@ -80,13 +96,13 @@ public class InputSceneController implements Initializable {
             obj1.put("Paid_by", p.getPaid_by());
             obj1.put("Comment", p.getComment());
             obj1.put("Amount", p.getAmount());
+            obj1.put("Row", p.getRow());
 
             JSONObject o1= new JSONObject();
             o1.put("Entry", obj1);
 
             array.add(o1);
-        });
-        
+        });  
         
         try(FileWriter file=new FileWriter("OutputTemporary.json")){
              file.write(array.toJSONString());

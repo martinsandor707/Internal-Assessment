@@ -63,14 +63,29 @@ public class Main extends Application {
             //Immediately create a temporary copy of the database
             FileWriter file=new FileWriter("OutputTemporary.json");
             file.write(jsonArray.toJSONString());
-            file.flush();
+            file.flush();        
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch(ParseException e){
+            e.printStackTrace();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        catch(Exception e){
+            
+        }
+        
+        try{
             //Do the same for the list of lessees
             Object obj2= parser2.parse(new FileReader("LesseeList.json"));
             JSONArray jsonArray2=(JSONArray)obj2;            
             jsonArray2.forEach(p ->parseLesseeObj((JSONObject)p));
 
             FileWriter file2=new FileWriter("LesseeListTemporary.json");
-            file2.write(jsonArray.toJSONString());
+            file2.write(jsonArray2.toJSONString());
             file2.flush();
         
         }
@@ -101,8 +116,6 @@ public class Main extends Application {
         stage.setOnCloseRequest(confirmCloseRequestHandler);
         
         stage.show();
-        
-        
         
     }
     
@@ -206,7 +219,7 @@ public class Main extends Application {
         p1.setComment((String)userObj.get("Comment"));
         //NUMBERS IN JSON ARE STORED AS LONG BY DEFAULT
         p1.setAmount((int) ((long)userObj.get("Amount")));
-        System.out.println("Third line of ParseEntry");
+        p1.setRow((int) ((long)userObj.get("Row")));
         Entries.add(p1);
     }
     //Used after the elements of LesseeList.json are contained in a JSONArray
@@ -247,7 +260,9 @@ public class Main extends Application {
         }
         catch (IOException e){
             e.printStackTrace();
+            return true;
         }
+        
 
         return false;
     }   
