@@ -9,22 +9,22 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml_internalassessment.InputSceneController">
    <children>
-      <Button fx:id="addButton" layoutX="59.0" layoutY="200.0" mnemonicParsing="false" onAction="#addButtonAction" text="Hozzáadás" />
-      <Button fx:id="backButton" layoutX="71.0" layoutY="335.0" mnemonicParsing="false" onAction="#HandleChangeScene" text="Vissza" />
-      <Label layoutX="210.0" layoutY="77.0" text="Dátum:" />
-      <Label layoutX="210.0" layoutY="130.0" text="Mennyiség:" />
-      <Label layoutX="210.0" layoutY="184.0" prefHeight="17.0" prefWidth="64.0" text="Típus" />
-      <TextField fx:id="amountTextField" layoutX="300.0" layoutY="126.0" promptText="csak számokat adj meg" />
-      <TextField fx:id="typeTextField" layoutX="300.0" layoutY="180.0" promptText="saját belátás szerint" />
+      <Button fx:id="addButton" layoutX="77.0" layoutY="201.0" mnemonicParsing="false" onAction="#addButtonAction" text="Add" />
+      <Button fx:id="backButton" layoutX="76.0" layoutY="335.0" mnemonicParsing="false" onAction="#HandleChangeScene" text="Back" />
+      <Label layoutX="210.0" layoutY="77.0" text="Date:" />
+      <Label layoutX="210.0" layoutY="130.0" text="Amount:" />
+      <Label layoutX="210.0" layoutY="184.0" prefHeight="17.0" prefWidth="64.0" text="Type:" />
+      <TextField fx:id="amountTextField" layoutX="300.0" layoutY="126.0" promptText="Please only use numbers" />
+      <TextField fx:id="typeTextField" layoutX="300.0" layoutY="180.0" promptText="Whatever you prefer" />
       <Label fx:id="Label" layoutX="168.0" layoutY="322.0" prefHeight="25.0" prefWidth="385.0">
          <font>
             <Font size="13.0" />
          </font></Label>
-      <Label layoutX="210.0" layoutY="229.0" prefHeight="17.0" prefWidth="64.0" text="Fizette:" />
-      <TextField fx:id="paidByTextField1" layoutX="300.0" layoutY="225.0" promptText="személy vagy szervezet" />
-      <Label layoutX="210.0" layoutY="275.0" prefHeight="17.0" prefWidth="64.0" text="Komment:" />
-      <TextField fx:id="commentTextField" layoutX="300.0" layoutY="271.0" promptText="bármi egyéb" />
-      <DatePicker fx:id="dateTextField" editable="false" layoutX="300.0" layoutY="73.0" promptText="éééé.hh.nn" />
-      <Label layoutX="172.0" layoutY="32.0" text="A dátum megadásánál kérlek használd a jobb oldali gombot!" />
+      <Label layoutX="210.0" layoutY="229.0" prefHeight="17.0" prefWidth="64.0" text="Paid by:" />
+      <TextField fx:id="paidByTextField1" layoutX="300.0" layoutY="225.0" promptText="Person or organization" />
+      <Label layoutX="210.0" layoutY="275.0" prefHeight="17.0" prefWidth="64.0" text="Comment:" />
+      <TextField fx:id="commentTextField" layoutX="300.0" layoutY="271.0" promptText="Anything else" />
+      <DatePicker fx:id="dateTextField" editable="false" layoutX="300.0" layoutY="73.0" promptText="yyyy.mm.dd" />
+      <Label layoutX="201.0" layoutY="30.0" text="When picking a date, please use the button on the right!" />
    </children>
 </AnchorPane>

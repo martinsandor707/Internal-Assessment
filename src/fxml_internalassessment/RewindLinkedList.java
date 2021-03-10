@@ -10,7 +10,11 @@ import java.util.List;
 
 /**
  *
- * @author nando
+ * @author Martin
+ * This class is an implementation of a LinkedList with the purpose of making it
+ * possible for the user to use the rewind/forward funcions in the main table.
+ * Whenever the variable value is retrieved, the method getValueDeep returns a deep copy
+ * in order to avoid passing pointers instead of copies of the actual values.
  */
 public class RewindLinkedList {
     

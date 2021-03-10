@@ -10,28 +10,28 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml_internalassessment.LesseeListController">
    <children>
-      <Button fx:id="BackButton" layoutX="25.0" layoutY="361.0" mnemonicParsing="false" onAction="#HandleChangeScene" text="Vissza" />
+      <Button fx:id="BackButton" layoutX="25.0" layoutY="361.0" mnemonicParsing="false" onAction="#HandleChangeScene" text="Back" />
       <TableView fx:id="Table" layoutX="13.0" layoutY="56.0" prefHeight="288.0" prefWidth="1150.0">
         <columns>
-          <TableColumn fx:id="Name" prefWidth="114.0" text="Név" />
-            <TableColumn fx:id="Address" prefWidth="194.0" text="Cím" />
-            <TableColumn fx:id="Phone_number" prefWidth="125.0" text="Telefonszám" />
+          <TableColumn fx:id="Name" prefWidth="114.0" text="Name" />
+            <TableColumn fx:id="Address" prefWidth="194.0" text="Address" />
+            <TableColumn fx:id="Phone_number" prefWidth="125.0" text="Phone number" />
             <TableColumn fx:id="Email" prefWidth="219.0" text="Email" />
-            <TableColumn fx:id="Comments" prefWidth="497.0" text="Komment" />
+            <TableColumn fx:id="Comments" prefWidth="497.0" text="Comment" />
         </columns>
       </TableView>
-      <Label layoutX="531.0" layoutY="14.0" text="Jelenlegi Bérlők" AnchorPane.topAnchor="14.0">
+      <Label layoutX="531.0" layoutY="14.0" text="Current Lessees" AnchorPane.topAnchor="14.0">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="AddButton" layoutX="1019.0" layoutY="361.0" mnemonicParsing="false" onAction="#ChangeToInputScene" text="Hozzáadás" />
-      <Button fx:id="DeleteButton" layoutX="528.0" layoutY="361.0" mnemonicParsing="false" text="Kiválasztott elem törlése" />
-      <Button fx:id="RewindButton" layoutX="917.0" layoutY="17.0" mnemonicParsing="false" onAction="#HandleRewindAction" text="Mégse" />
-      <Button fx:id="ForwardButton" layoutX="1030.0" layoutY="17.0" mnemonicParsing="false" onAction="#HandleForwardAction" text="Mégis" />
-      <Button layoutX="246.0" layoutY="361.0" mnemonicParsing="false" onAction="#SaveButtonAction" text="Mentés" />
-      <Label fx:id="MessageLabel" layoutX="246.0" layoutY="365.0" />
-      <Label layoutX="74.0" layoutY="21.0" text="Keresés:" />
+      <Button fx:id="AddButton" layoutX="1019.0" layoutY="361.0" mnemonicParsing="false" onAction="#ChangeToInputScene" text="Add new row" />
+      <Button fx:id="DeleteButton" layoutX="528.0" layoutY="361.0" mnemonicParsing="false" text="Delete Row" />
+      <Button fx:id="RewindButton" layoutX="917.0" layoutY="17.0" mnemonicParsing="false" onAction="#HandleRewindAction" text="Rewind" />
+      <Button fx:id="ForwardButton" layoutX="1030.0" layoutY="17.0" mnemonicParsing="false" onAction="#HandleForwardAction" text="Forward" />
+      <Button layoutX="246.0" layoutY="361.0" mnemonicParsing="false" onAction="#SaveButtonAction" text="Save" />
+      <Label fx:id="MessageLabel" layoutX="291.0" layoutY="365.0" prefHeight="17.0" prefWidth="191.0" />
+      <Label layoutX="74.0" layoutY="21.0" text="Search" />
       <TextField fx:id="FilterTextField" layoutX="138.0" layoutY="17.0" />
    </children>
 </AnchorPane>

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * @author Martin
  * This class is a carbon copy of RewindLinkedList, customized for ArrayLists with a generic type of Lessee
  */
 public class LesseeRewindLinkedList {

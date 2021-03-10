@@ -7,11 +7,9 @@ package fxml_internalassessment;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,7 +29,7 @@ import org.json.simple.JSONObject;
 /**
  * FXML Controller class
  *
- * @author nando
+ * @author Martin
  */
 public class InputSceneController implements Initializable {
 
@@ -65,19 +63,18 @@ public class InputSceneController implements Initializable {
     //Add the contents of the TextFields to the database
     private void addButtonAction(ActionEvent event) {
         try{
-          LocalDate ld=dateTextField.getValue();
-            System.out.println(amountTextField.getText());
-        Entry input=new Entry(ld.toString(), typeTextField.getText(), paidByTextField1.getText(), commentTextField.getText(), Integer.parseInt(amountTextField.getText()), (Main.Entries.size()+1));
-        Main.Entries.add(input);
-        Label.setText("Új elem sikeresen hozzáadva!");
+            LocalDate ld=dateTextField.getValue();
+            Entry input=new Entry(ld.toString(), typeTextField.getText(), paidByTextField1.getText(), commentTextField.getText(), Integer.parseInt(amountTextField.getText()), (Main.Entries.size()+1));
+            Main.Entries.add(input);
+            Label.setText("New element successfully added!");
         }
         catch(NumberFormatException e){
-            Label.setText("Kérlek a mennyiség mezőbe csak számokat adj meg!");
-            e.printStackTrace();
+            Label.setText("Please only input numbers into the amount row!");
+            System.err.println("Number format exception at amountTextField!");
         }
         catch(NullPointerException e){
-            Label.setText("Kérlek töltsd ki az összes mezőt!");
-            e.printStackTrace();
+            Label.setText("Please write something in all of the rows!");
+            System.err.println("Null pointer exception at one of the TextFieds!");
         }
         
         JSONArray array=new JSONArray();

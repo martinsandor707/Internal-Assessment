@@ -5,11 +5,9 @@
  */
 package fxml_internalassessment;
 
-import java.util.LinkedList;
-
 /**
  *
- * @author marti
+ * @author Martin
  */
 public class Lessee {
     private String name, address, phone_number, email, comments;

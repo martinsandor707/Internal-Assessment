@@ -7,7 +7,7 @@ package fxml_internalassessment;
 
 /**
  *
- * @author nando
+ * @author Martin
  */
 public class Entry {
     

@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
@@ -36,13 +35,12 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 /**
  * FXML Controller class
  *
- * @author nando
+ * @author Martin
+ * This class is responsible for helping the user view the list of lessees, which is stored in a file called LesseeList.json.
+ * Much like the main table, this table saves any changes into a temporary file, and changes are only permanent if the Save button is pressed.
  */
 public class LesseeListController implements Initializable {
 
@@ -75,7 +73,7 @@ public class LesseeListController implements Initializable {
     
     String dummy;
     
-
+    ObservableList list=FXCollections.observableArrayList(Main.LesseeList);
     
     
     /**
@@ -149,48 +147,19 @@ public class LesseeListController implements Initializable {
         });
         
         //Loads the elements of Entries into the table
-        Main.LesseeList.forEach((p) ->{
-            Table.getItems().add(p);
-        });
+        Table.setItems(list);
         
         //Delete button functionality
         DeleteButton.setOnAction(e -> {
             Lessee selectedItem=Table.getSelectionModel().getSelectedItem();
-            Table.getItems().remove(selectedItem);
+            list.remove(selectedItem);
+            dummy=FilterTextField.getText();
+            FilterTextField.setText("");
             update();
+            FilterTextField.setText(dummy);
         });
         
-        
-        //Wrap the ObservableList in a FilteredList (initially display all data)
-        FilteredList<Lessee> filteredData=new FilteredList<>(Table.getItems(), b-> true);
-        //2. Set the filter Predicate whenever the filter changes
-        FilterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(lessee -> {
-                
-                //If filter text is empty, display all entries
-                if (newValue == null || newValue.isEmpty()) return true;
-                
-                String lowerCaseFilter=newValue.toLowerCase();
-                
-                //Compare the contents of the date, type, paid_by and comment columns to the filter text
-                if (lessee.getName().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
-                else if (lessee.getAddress().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (lessee.getPhone_number().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (lessee.getEmail().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (lessee.getComments().toLowerCase().contains(lowerCaseFilter)) return true;
-                return false; //Does not match
-            });
-        });
-        
-        //3. Wrap the FilteredList in a SortedList
-        SortedList<Lessee> sortedData=new SortedList<>(filteredData);
-        
-        //4. Bind the SortedList comparator to the TableView comparator. Otherwise, sorting the TableView would have no effect.
-        sortedData.comparatorProperty().bind(Table.comparatorProperty());
-        
-        //5. Add sorted and filtered data to the table
-        Table.setItems(sortedData);
-        
+        connectTableToFilter();        
     }    
 
     //returns to main Scene
@@ -227,8 +196,8 @@ public class LesseeListController implements Initializable {
         JSONArray array=new JSONArray();
         ArrayList<Lessee> LesseeList2=new ArrayList<>();
         //Collects the contents of the table into a list
-        Table.getItems().forEach((p) -> {
-            LesseeList2.add(p);
+        list.forEach((p) -> {
+            LesseeList2.add((Lessee)p);
         });
         //updates database to have the elements corresponding with the table
         Main.LesseeList=LesseeList2;
@@ -255,11 +224,13 @@ public class LesseeListController implements Initializable {
         catch(IOException e){
             e.printStackTrace();
         }
+        //Set filter to track the current version of the table
+        connectTableToFilter();
         
         //Keeps track of the state of the table, in case the user wants to rewind
         ArrayList<Lessee> newNode=new ArrayList<>();
-        Table.getItems().forEach(p ->{
-            newNode.add(p);
+        list.forEach(p ->{
+            newNode.add((Lessee)p);
         });
         Main.currentLesseeNode.setNext(newNode);
         Main.currentLesseeNode=Main.currentLesseeNode.getNext();
@@ -295,9 +266,8 @@ public class LesseeListController implements Initializable {
              file.write(array.toJSONString());
              file.flush();
              
-            ObservableList list=FXCollections.observableArrayList(Main.Entries);
-            Table.setItems(list);
-            Table.refresh();
+            list.setAll(Main.LesseeList);
+            connectTableToFilter();
         }
         
         catch(IOException e){
@@ -337,9 +307,7 @@ public class LesseeListController implements Initializable {
              file.write(array.toJSONString());
              file.flush();
              
-            ObservableList list=FXCollections.observableArrayList(Main.Entries);
-            Table.setItems(list);
-            Table.refresh();
+            list.setAll(Main.LesseeList);
         }
         
         catch(IOException e){
@@ -371,7 +339,7 @@ public class LesseeListController implements Initializable {
             ins.close();
             outs.close();
             
-            MessageLabel.setText("Változtatások mentve!");
+            MessageLabel.setText("Changes successfully saved !");
         }
         
         catch(FileNotFoundException e){
@@ -384,6 +352,38 @@ public class LesseeListController implements Initializable {
         catch(Exception e){
             
     }
+    }
+    
+    private void connectTableToFilter(){
+        //Wrap the ObservableList in a FilteredList (initially display all data)
+        FilteredList<Lessee> filteredData=new FilteredList<>(list, b-> true);
+        //2. Set the filter Predicate whenever the filter changes
+        FilterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(lessee -> {
+                
+                //If filter text is empty, display all entries
+                if (newValue == null || newValue.isEmpty()) return true;
+                
+                String lowerCaseFilter=newValue.toLowerCase();
+                
+                //Compare the contents of the date, type, paid_by and comment columns to the filter text
+                if (lessee.getName().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
+                else if (lessee.getAddress().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (lessee.getPhone_number().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (lessee.getEmail().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (lessee.getComments().toLowerCase().contains(lowerCaseFilter)) return true;
+                return false; //Does not match
+            });
+        });
+        
+        //3. Wrap the FilteredList in a SortedList
+        SortedList<Lessee> sortedData=new SortedList<>(filteredData);
+        
+        //4. Bind the SortedList comparator to the TableView comparator. Otherwise, sorting the TableView would have no effect.
+        sortedData.comparatorProperty().bind(Table.comparatorProperty());
+        
+        //5. Add sorted and filtered data to the table
+        Table.setItems(sortedData);
     }
     
 }

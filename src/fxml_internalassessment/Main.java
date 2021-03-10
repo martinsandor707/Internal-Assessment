@@ -12,12 +12,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -38,7 +36,7 @@ import org.json.simple.parser.ParseException;
 
 /**
  *
- * @author nando
+ * @author Martin
  */
 public class Main extends Application {
     //The current state of the database
@@ -150,18 +148,18 @@ public class Main extends Application {
         Stage popupwindow=new Stage();
 
         popupwindow.initModality(Modality.APPLICATION_MODAL);
-        popupwindow.setTitle("Figyelmeztetés");
+        popupwindow.setTitle("Alert!");
 
         //Warning message
-        Label label1= new Label("Nem mentetted el a változtatásaidat! \nAkarsz menteni mielőtt kilépnél?");
+        Label label1= new Label("You haven't saved your changes! \nDo you want to save before exiting?");
         label1.setAlignment(Pos.CENTER);
 
         //Yes, No and Cancel Buttons
-        Button buttonNo= new Button("Nem");   
+        Button buttonNo= new Button("No");   
         buttonNo.setOnAction(e -> popupwindow.close());
         
         //Invokes FXMLDocumentController's HandleSaveData method before closing the entire application
-        Button buttonYes=new Button("Igen");
+        Button buttonYes=new Button("Yes");
         buttonYes.setOnAction(e ->{
             
             FXMLDocumentController app=new FXMLDocumentController();
@@ -171,7 +169,7 @@ public class Main extends Application {
             popupwindow.close();
         });
         //Consumes the event, therefore the application will not close
-        Button buttonCancel=new Button("Mégse");
+        Button buttonCancel=new Button("Cancel");
         buttonCancel.setOnAction(e -> {
             event.consume();
             popupwindow.close();
@@ -259,7 +257,7 @@ public class Main extends Application {
             if (isArrayEqual==true && isLesseeListEqual==true) return true;
         }
         catch (IOException e){
-            e.printStackTrace();
+            System.err.println("IOException at method isSameContent!");
             return true;
         }
         

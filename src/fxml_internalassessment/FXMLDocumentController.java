@@ -41,7 +41,7 @@ import org.json.simple.JSONObject;
 
 /**
  *
- * @author nando
+ * @author Martin
  */
 public class FXMLDocumentController implements Initializable {
     
@@ -69,16 +69,13 @@ public class FXMLDocumentController implements Initializable {
     private Button DeleteButton;
     @FXML
     private Label MessageLabel;
-    @FXML
-    private Label MenuLabel;
-    @FXML
-    private Label SpreadsheetLabel;
-    @FXML
-    private Button ChangeSceneButton;
     //Required by Amount to convert the user's input from String to Integer
     IntegerStringConverter converter=new IntegerStringConverter();
-    
+    //Used to preserve the unfiltered database when the user manipulates the filtered version
     String dummy="";
+    //Used to adjust row numbers when a row is deleted
+    int rowNR;
+    ObservableList list=FXCollections.observableArrayList(Main.Entries);
     
     
     @Override
@@ -86,7 +83,7 @@ public class FXMLDocumentController implements Initializable {
         
         //Placeholder message for an empty table is set
         Label lb=new Label();
-        lb.setText("A táblázat vagy üres vagy a keresés nem talált semmit.");
+        lb.setText("The table is either empty or your search didn't find anything");
         table.setPlaceholder(lb);
         //All columns are initialized
         Date.setCellValueFactory(new PropertyValueFactory<>("Date"));
@@ -153,51 +150,23 @@ public class FXMLDocumentController implements Initializable {
                 FilterTextField.setText(dummy);
         });
         
-        //Loads the elements of Entries into the table
-        Main.Entries.forEach((p) ->{
-            table.getItems().add(p);
-        });
+
         //Delete button functionality
         DeleteButton.setOnAction(e -> {
             Entry selectedItem=table.getSelectionModel().getSelectedItem();
-            table.getItems().remove(selectedItem);
+            list.remove(selectedItem);
             dummy=FilterTextField.getText();
             FilterTextField.setText("");
+            rowNR=1;
+            table.getItems().forEach( entry ->{
+               entry.setRow(rowNR);
+               rowNR++;
+            });
             update();
             FilterTextField.setText(dummy);
         });
         
-        //Wrap the ObservableList in a FilteredList (initially display all data)
-        FilteredList<Entry> filteredData=new FilteredList<>(table.getItems(), b-> true);
-        //2. Set the filter Predicate whenever the filter changes
-        FilterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(entry -> {
-                
-                //If filter text is empty, display all entries
-                if (newValue == null || newValue.isEmpty()) return true;
-                
-                String lowerCaseFilter=newValue.toLowerCase();
-                
-                //Compare the contents of the date, type, paid_by and comment columns to the filter text
-                if (entry.getDate().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
-                else if (entry.getType().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (String.valueOf(entry.getAmount()).toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (entry.getPaid_by().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (entry.getComment().toLowerCase().contains(lowerCaseFilter)) return true;
-                return false; //Does not match
-            });
-        });
-        
-        //3. Wrap the FilteredList in a SortedList
-        SortedList<Entry> sortedData=new SortedList<>(filteredData);
-        
-        //4. Bind the SortedList comparator to the TableView comparator. Otherwise, sorting the TableView would have no effect.
-        sortedData.comparatorProperty().bind(table.comparatorProperty());
-        
-        //5. Add sorted and filtered data to the table
-        table.setItems(sortedData);
-        
-        
+        connectTableToFilter();
     }    
 
     //Changes scene to InputScene.fxml
@@ -216,10 +185,9 @@ public class FXMLDocumentController implements Initializable {
         
     }
 
-    //Opens Detailed window, gives data of selected row to the other Scene
+    //Opens LesseeList window
     @FXML
     private void HandleChangeScene2(ActionEvent event) {
-        Entry selectedItem=table.getSelectionModel().getSelectedItem();
          try{
             FXMLLoader loader=new FXMLLoader();
             loader.setLocation(getClass().getResource("LesseeList.fxml"));
@@ -242,8 +210,8 @@ public class FXMLDocumentController implements Initializable {
         JSONArray array=new JSONArray();
         ArrayList<Entry> entries2=new ArrayList<>();
         //Collects the contents of the table into a list
-        table.getItems().forEach((p) -> {
-            entries2.add(p);
+        list.forEach(entry -> {
+            entries2.add((Entry) entry);
         });
         //updates database to have the elements corresponding with the table
         Main.Entries=entries2;
@@ -271,10 +239,13 @@ public class FXMLDocumentController implements Initializable {
         catch(IOException e){
             e.printStackTrace();
         }
+        //Set filter to track the current version of the table
+        connectTableToFilter();
+        
         //Keeps track of the state of the table, in case the user wants to rewind
         ArrayList<Entry> newNode=new ArrayList<>();
-        table.getItems().forEach(p ->{
-            newNode.add(p);
+        list.forEach(p ->{
+            newNode.add((Entry)p);
         });
         Main.currentNode.setNext(newNode);
         Main.currentNode=Main.currentNode.getNext();
@@ -301,7 +272,7 @@ public class FXMLDocumentController implements Initializable {
             ins.close();
             outs.close();
             
-            MessageLabel.setText("Változtatások mentve!");
+            MessageLabel.setText("Changes successfully saved!");
         }
         
         catch(FileNotFoundException e){
@@ -347,11 +318,10 @@ public class FXMLDocumentController implements Initializable {
         
         
         try(FileWriter file=new FileWriter("OutputTemporary.json")){
-             file.write(array.toJSONString());
-             file.flush();
-            ObservableList list=FXCollections.observableArrayList(Main.Entries);
-            table.setItems(list);
-            table.refresh();
+            file.write(array.toJSONString());
+            file.flush();
+            list.setAll(Main.Entries);
+            connectTableToFilter();
         }
         
         catch(IOException e){
@@ -391,9 +361,7 @@ public class FXMLDocumentController implements Initializable {
              file.write(array.toJSONString());
              file.flush();
              
-            ObservableList list=FXCollections.observableArrayList(Main.Entries);
-            table.setItems(list);
-            table.refresh();
+            list.setAll(Main.Entries);
         }
         
         catch(IOException e){
@@ -408,21 +376,24 @@ public class FXMLDocumentController implements Initializable {
     private void Summation(ActionEvent event) {
         try{
             int sum=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText());
-            System.out.println("Sup");
             Entry cur;
             for (int i = start-1; i < end; i++) {
                 cur=Main.Entries.get(i);
                 sum=sum+cur.getAmount();
             }
-            Entry newEntry=new Entry(LocalDate.now().toString(),"Összesítés:"+start+"-"+end,"-----","",sum,Main.Entries.size()+1);
+            Entry newEntry=new Entry(LocalDate.now().toString(),"Sum:"+start+"-"+end,"-----","",sum,Main.Entries.size()+1);
             Main.Entries.add(newEntry);
-            ObservableList list=FXCollections.observableArrayList(Main.Entries);
-            table.setItems(list);
-            table.refresh();
+            list.setAll(Main.Entries);
+            
+            update();
             }
             catch(NumberFormatException e){
-                MessageLabel.setText("Kérlek a számítási mezőkbe csak számokat adj meg!");
-                System.err.println("Number format exception!");
+                MessageLabel.setText("Please only input numbers into the to/from rows!");
+                System.err.println("Number format exception at summation!");
+            }
+            catch(IndexOutOfBoundsException e){
+                MessageLabel.setText("One or more of the rows you entered are incorrect!");
+                System.err.println("Index out of bounds exception at summation!");
             }
     }
 
@@ -437,16 +408,52 @@ public class FXMLDocumentController implements Initializable {
                 count++;
             }
             avg=avg/count;
-            Entry newEntry=new Entry(LocalDate.now().toString(),"Átlag:"+start+"-"+end,"-----","",avg,Main.Entries.size()+1);
+            Entry newEntry=new Entry(LocalDate.now().toString(),"Average:"+start+"-"+end,"-----","",avg,Main.Entries.size()+1);
             Main.Entries.add(newEntry);
-            ObservableList list=FXCollections.observableArrayList(Main.Entries);
-            table.setItems(list);
-            table.refresh();
+            list.setAll(Main.Entries);
+            
+            update();
         }
         catch(NumberFormatException e){
-            MessageLabel.setText("Kérlek a számítási mezőkbe csak számokat adj meg!");
-            e.printStackTrace();
+            MessageLabel.setText("Please only input numbers into the to/from rows!");
+            System.err.println("Number format exception at averaging!");
         }
+        catch(IndexOutOfBoundsException e){
+                MessageLabel.setText("One or more of the rows you entered are incorrect!");
+                System.err.println("Index out of bounds exception at averaging!");
+            }
+    }
+    
+    private void connectTableToFilter(){
+        //Wrap the ObservableList in a FilteredList (initially display all data)
+        FilteredList<Entry> filteredData=new FilteredList<>(list, b-> true);
+        //2. Set the filter Predicate whenever the filter changes
+        FilterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(entry -> {
+                
+                //If filter text is empty, display all entries
+                if (newValue == null || newValue.isEmpty()) return true;
+                
+                String lowerCaseFilter=newValue.toLowerCase();
+                
+                //Compare the contents of the date, type, paid_by and comment columns to the filter text
+                if (entry.getDate().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
+                else if (entry.getType().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (String.valueOf(entry.getAmount()).toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (entry.getPaid_by().toLowerCase().contains(lowerCaseFilter)) return true;
+                else if (entry.getComment().toLowerCase().contains(lowerCaseFilter)) return true;
+                return false; //Does not match
+            });
+        });
+        
+        //3. Wrap the FilteredList in a SortedList
+        SortedList<Entry> sortedData=new SortedList<>(filteredData);
+        
+        //4. Bind the SortedList comparator to the TableView comparator. Otherwise, sorting the TableView would have no effect.
+        sortedData.comparatorProperty().bind(table.comparatorProperty());
+        
+        //5. Add sorted and filtered data to the table
+        table.setItems(sortedData);
     }
     
 }

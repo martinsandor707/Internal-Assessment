@@ -11,32 +11,32 @@
 
 <AnchorPane id="AnchorPane" prefHeight="648.0" prefWidth="1008.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml_internalassessment.FXMLDocumentController">
     <children>
-        <Button layoutX="835.0" layoutY="523.0" onAction="#Summation" text="Összegzés" />
+        <Button layoutX="835.0" layoutY="523.0" onAction="#Summation" text="Sum" />
       <TableView fx:id="table" layoutY="27.0" prefHeight="448.0" prefWidth="1008.0">
         <columns>
-            <TableColumn fx:id="Row" prefWidth="37.0" text="Sor" />
-          <TableColumn fx:id="Date" prefWidth="118.0" text="Dátum" />
-          <TableColumn fx:id="Amount" prefWidth="115.0" text="Költség" />
-            <TableColumn fx:id="Type" prefWidth="161.0" text="Típus" />
-            <TableColumn fx:id="Paid_by" prefWidth="150.0" text="Fizette" />
-            <TableColumn fx:id="Comment" prefWidth="425.0" text="Komment" />
+            <TableColumn fx:id="Row" prefWidth="37.0" text="Row" />
+          <TableColumn fx:id="Date" prefWidth="118.0" text="Date" />
+          <TableColumn fx:id="Amount" prefWidth="115.0" text="Amount" />
+            <TableColumn fx:id="Type" prefWidth="161.0" text="Type" />
+            <TableColumn fx:id="Paid_by" prefWidth="150.0" text="Paid by" />
+            <TableColumn fx:id="Comment" prefWidth="425.0" text="Comment" />
         </columns>
       </TableView>
-      <Label fx:id="MenuLabel" layoutX="746.0" layoutY="475.0" text="Számolások">
+      <Label layoutX="742.0" layoutY="475.0" text="Calculations">
          <font>
             <Font size="17.0" />
          </font>
       </Label>
-      <Label fx:id="SpreadsheetLabel" layoutX="424.0" text="TÁBLÁZAT">
+      <Label layoutX="480.0" text="Table">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
       <ButtonBar layoutX="639.0" prefHeight="30.0" prefWidth="369.0">
         <buttons>
-            <Button mnemonicParsing="false" onAction="#HandleChangeScene2" text="Bérlők" />
-          <Button mnemonicParsing="false" onAction="#HandleRewindAction" text="Mégse" />
-            <Button mnemonicParsing="false" onAction="#HandleForwardAction" text="Mégis" />
+            <Button mnemonicParsing="false" onAction="#HandleChangeScene2" text="Lessees" />
+          <Button mnemonicParsing="false" onAction="#HandleRewindAction" text="Rewind" />
+            <Button mnemonicParsing="false" onAction="#HandleForwardAction" text="Forward" />
         </buttons>
       </ButtonBar>
       <Label fx:id="MessageLabel" layoutX="435.0" layoutY="608.0">
@@ -44,15 +44,15 @@
             <Font size="17.0" />
          </font>
       </Label>
-      <Button fx:id="ChangeSceneButton" layoutX="50.0" layoutY="501.0" onAction="#HandleChangeScene" text="Új elem" />
-      <Button fx:id="DeleteButton" layoutX="42.0" layoutY="565.0" text="Sor törlése" />
-      <Button layoutX="7.0" layoutY="2.0" onAction="#HandleSaveData" text="Mentés" />
-      <Label layoutX="132.0" layoutY="539.0" text="Keresés:" />
+      <Button layoutX="50.0" layoutY="501.0" onAction="#HandleChangeScene" text="Add" />
+      <Button fx:id="DeleteButton" layoutX="42.0" layoutY="565.0" text="Delete row" />
+      <Button layoutY="2.0" onAction="#HandleSaveData" text="Save" />
+      <Label layoutX="132.0" layoutY="539.0" text="Search:" />
       <TextField fx:id="FilterTextField" layoutX="191.0" layoutY="535.0" />
-      <Label layoutX="626.0" layoutY="529.0" text="Ettől a sortól" />
+      <Label layoutX="626.0" layoutY="529.0" prefWidth="89.0" text="From this row:" />
       <TextField fx:id="FromRow" layoutX="711.0" layoutY="527.0" prefHeight="25.0" prefWidth="76.0" />
-      <Label layoutX="625.0" layoutY="567.0" text="Eddig a sorig" />
+      <Label layoutX="625.0" layoutY="567.0" prefHeight="17.0" prefWidth="76.0" text="To this row:" />
       <TextField fx:id="ToRow" layoutX="711.0" layoutY="565.0" prefHeight="25.0" prefWidth="76.0" />
-      <Button layoutX="835.0" layoutY="563.0" onAction="#Averaging" text="Átlagolás" />
+      <Button layoutX="835.0" layoutY="563.0" onAction="#Averaging" text="Average" />
     </children>
 </AnchorPane>

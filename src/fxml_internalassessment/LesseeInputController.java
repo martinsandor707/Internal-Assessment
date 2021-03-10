@@ -29,7 +29,7 @@ import org.json.simple.JSONObject;
 /**
  * FXML Controller class
  *
- * @author marti
+ * @author Martin
  */
 public class LesseeInputController implements Initializable {
 
@@ -49,7 +49,7 @@ public class LesseeInputController implements Initializable {
     private Label Label;
 
     /**
-     * Initializes the controller class.
+     * This class is responsible for letting the user add more elements into the list of Lessees
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -63,7 +63,7 @@ public class LesseeInputController implements Initializable {
         
         JSONArray array=new JSONArray();
         
-        Label.setText("Új elem sikeresen hozzáadva!");
+        Label.setText("New row successfully added!");
         Name.setText("");
         Address.setText("");
         Phone_number.setText("");
