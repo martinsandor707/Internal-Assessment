@@ -1,1 +1,1 @@
-[]
+[{"Entry":{"Comment":"Birthday gift","Type":"Gift","Paid_by":"Martin","Amount":100,"Row":1,"Date":"2001-03-30"}},{"Entry":{"Comment":"Can be deleted at one's leisure","Type":"Test","Paid_by":"No one","Amount":50,"Row":2,"Date":"2021-03-11"}},{"Entry":{"Comment":"","Type":"Sum:1-2","Paid_by":"-----","Amount":150,"Row":3,"Date":"2021-03-11"}},{"Entry":{"Comment":"","Type":"Average:1-2","Paid_by":"-----","Amount":75,"Row":4,"Date":"2021-03-11"}}]

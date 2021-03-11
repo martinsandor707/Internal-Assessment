@@ -206,7 +206,7 @@ public class FXMLDocumentController implements Initializable {
    //Creates a file called OutputTemporary.json where any changes to the original Output.json are stored.
    //This method is called every time the contents of the table are manipulated:
    //At adding a new element, at deleting or modifying an already existing element 
-    public void update(){
+    private void update(){
         JSONArray array=new JSONArray();
         ArrayList<Entry> entries2=new ArrayList<>();
         //Collects the contents of the table into a list

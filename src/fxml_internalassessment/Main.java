@@ -236,7 +236,8 @@ public class Main extends Application {
     
     
     /**
-    *Checks the contents of Output.json and OutputTemporary.json and returns true if their content is identical, false otherwise
+    *Checks the contents of Output.json, LesseeList.json and their temporary versions.
+    *returns true if their content is identical (or if the user never saved before), false otherwise
     * */
     private boolean isSameContent(){
         try{

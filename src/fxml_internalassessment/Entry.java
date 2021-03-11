@@ -11,8 +11,8 @@ package fxml_internalassessment;
  */
 public class Entry {
     
-    String date, type, paid_by, comment;
-    int amount, row;
+    private String date, type, paid_by, comment;
+    private int amount, row;
 
     public String getDate() {
         return date;
