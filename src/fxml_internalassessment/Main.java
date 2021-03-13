@@ -140,6 +140,7 @@ public class Main extends Application {
     }
     /**
     *Displays pop-up window  asking whether the user wants to save before exiting the application
+    *Only activates if the user changed the table since last saving
     */
     private EventHandler<WindowEvent> confirmCloseRequestHandler= event ->{
         if (!isSameContent())
@@ -237,7 +238,7 @@ public class Main extends Application {
     
     /**
     *Checks the contents of Output.json, LesseeList.json and their temporary versions.
-    *returns true if their content is identical (or if the user never saved before), false otherwise
+    *returns true if their content is identical, false otherwise
     * */
     private boolean isSameContent(){
         try{
@@ -259,7 +260,6 @@ public class Main extends Application {
         }
         catch (IOException e){
             System.err.println("IOException at method isSameContent!");
-            return true;
         }
         
 

@@ -62,7 +62,7 @@ public class RewindLinkedList {
     public void setNext(List<Entry> value) {
         this.next = new RewindLinkedList(value, this, null);
     }
-
+    //Returns a deep copy of value
     public ArrayList<Entry> getValueDeep() {
         ArrayList<Entry> newValue = new ArrayList<>();
         for (int i = 0; i < value.size(); i++) {
