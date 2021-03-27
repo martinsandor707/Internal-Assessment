@@ -39,7 +39,7 @@
             <Button mnemonicParsing="false" onAction="#HandleForwardAction" text="Forward" />
         </buttons>
       </ButtonBar>
-      <Label fx:id="MessageLabel" layoutX="435.0" layoutY="608.0">
+      <Label fx:id="MessageLabel" layoutX="14.0" layoutY="604.0" prefHeight="26.0" prefWidth="586.0">
          <font>
             <Font size="17.0" />
          </font>
@@ -50,9 +50,15 @@
       <Label layoutX="132.0" layoutY="539.0" text="Search:" />
       <TextField fx:id="FilterTextField" layoutX="191.0" layoutY="535.0" />
       <Label layoutX="626.0" layoutY="529.0" prefWidth="89.0" text="From this row:" />
-      <TextField fx:id="FromRow" layoutX="711.0" layoutY="527.0" prefHeight="25.0" prefWidth="76.0" />
+      <TextField fx:id="FromRow" alignment="CENTER" layoutX="711.0" layoutY="527.0" prefHeight="25.0" prefWidth="76.0" text="1" />
       <Label layoutX="625.0" layoutY="567.0" prefHeight="17.0" prefWidth="76.0" text="To this row:" />
-      <TextField fx:id="ToRow" layoutX="711.0" layoutY="565.0" prefHeight="25.0" prefWidth="76.0" />
+      <TextField fx:id="ToRow" alignment="CENTER" layoutX="711.0" layoutY="565.0" prefHeight="25.0" prefWidth="76.0" text="1" />
       <Button layoutX="835.0" layoutY="563.0" onAction="#Averaging" text="Average" />
+      <Button layoutX="88.0" layoutY="3.0" onAction="#ContactButtonAction" text="Contact" />
+      <Button layoutX="237.0" layoutY="2.0" onAction="#TutorialButtonAction" text="Tutorial" />
+      <Label layoutX="151.0" layoutY="569.0" text="You can separate conditions with a semicolon!" />
+      <Label layoutX="607.0" layoutY="598.0" prefHeight="17.0" prefWidth="89.0" text="Additional rows" />
+      <TextField fx:id="AdditionalRows" alignment="CENTER" layoutX="711.0" layoutY="596.0" prefHeight="25.0" prefWidth="76.0" />
+      <Label layoutX="796.0" layoutY="600.0" text="Use commas to separate rows" />
     </children>
 </AnchorPane>

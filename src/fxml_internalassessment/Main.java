@@ -99,7 +99,7 @@ public class Main extends Application {
         catch(Exception e){
             
         }
-        
+        //Initialize the first nodes used for Rewind
         currentNode=new RewindLinkedList(Entries, null, null);
         currentLesseeNode=new LesseeRewindLinkedList(LesseeList, null, null);
         

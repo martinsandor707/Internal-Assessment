@@ -23,6 +23,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,6 +35,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import org.json.simple.JSONArray;
@@ -72,10 +77,16 @@ public class FXMLDocumentController implements Initializable {
     //Required by Amount to convert the user's input from String to Integer
     IntegerStringConverter converter=new IntegerStringConverter();
     //Used to preserve the unfiltered database when the user manipulates the filtered version
-    String dummy="";
+    static String dummy="";
     //Used to adjust row numbers when a row is deleted
-    int rowNR;
+    static int rowNR;
+    //The list that appears in the table at first
     ObservableList list=FXCollections.observableArrayList(Main.Entries);
+    //Used for calculations on a filtered list
+    static ArrayList<Entry> actualList=new ArrayList<>();
+    @FXML
+    private TextField AdditionalRows;
+    
     
     
     @Override
@@ -165,7 +176,9 @@ public class FXMLDocumentController implements Initializable {
             update();
             FilterTextField.setText(dummy);
         });
-        
+        Main.Entries.forEach(p ->{
+            actualList.add(new Entry (p));
+        });
         connectTableToFilter();
     }    
 
@@ -202,10 +215,11 @@ public class FXMLDocumentController implements Initializable {
             e.printStackTrace();
         }
     }
-  
-   //Creates a file called OutputTemporary.json where any changes to the original Output.json are stored.
-   //This method is called every time the contents of the table are manipulated:
-   //At adding a new element, at deleting or modifying an already existing element 
+   /**
+   *Creates a file called OutputTemporary.json where any changes to the original Output.json are stored.
+   *This method is called every time the contents of the table are manipulated:
+   *At adding a new element, at deleting or modifying an already existing element 
+   */ 
     private void update(){
         JSONArray array=new JSONArray();
         ArrayList<Entry> entries2=new ArrayList<>();
@@ -239,9 +253,6 @@ public class FXMLDocumentController implements Initializable {
         catch(IOException e){
             e.printStackTrace();
         }
-        //Set filter to track the current version of the table
-        connectTableToFilter();
-        
         //Keeps track of the state of the table, in case the user wants to rewind
         ArrayList<Entry> newNode=new ArrayList<>();
         list.forEach(p ->{
@@ -252,6 +263,9 @@ public class FXMLDocumentController implements Initializable {
         if (Main.currentNode.getListSize()>5) Main.currentNode.removeFirst();
     }
 
+    /**
+     * Copies the contents of the temporary files into Output.json and LesseeList.json.
+     */
     @FXML
     public void HandleSaveData(ActionEvent event) {
         FileInputStream ins;
@@ -321,7 +335,13 @@ public class FXMLDocumentController implements Initializable {
             file.write(array.toJSONString());
             file.flush();
             list.setAll(Main.Entries);
-            connectTableToFilter();
+            //resets row numbers
+            rowNR=1;
+            table.getItems().forEach( entry ->{
+               entry.setRow(rowNR);
+               rowNR++;
+            });
+            
         }
         
         catch(IOException e){
@@ -329,10 +349,14 @@ public class FXMLDocumentController implements Initializable {
         }
         catch (NullPointerException e){
             e.printStackTrace();
-        }        
+        }
     }
 
     @FXML
+    /**
+     * Method is called when the "Forward" button is pressed. It only works if rewind has been pressed directly before pressing this button.
+     * It does the opposite of rewind: it changes the contents of the table to a newer version, provided one exists.
+     */
     private void HandleForwardAction(ActionEvent event) {
         JSONArray array=new JSONArray();
         
@@ -362,6 +386,13 @@ public class FXMLDocumentController implements Initializable {
              file.flush();
              
             list.setAll(Main.Entries);
+            //resets row numbers
+            rowNR=1;
+            table.getItems().forEach( entry ->{
+               entry.setRow(rowNR);
+               rowNR++;
+            });
+            
         }
         
         catch(IOException e){
@@ -373,46 +404,72 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
+    /**
+     * Sums up the interval specified in the "From" and "To" row numbers, then adds the result to the table
+     */
     private void Summation(ActionEvent event) {
+        int sum=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText());
+        Entry cur;
         try{
-            int sum=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText());
-            Entry cur;
+            
             for (int i = start-1; i < end; i++) {
-                cur=Main.Entries.get(i);
+                cur=actualList.get(i);
                 sum=sum+cur.getAmount();
             }
-            Entry newEntry=new Entry(LocalDate.now().toString(),"Sum:"+start+"-"+end,"-----","",sum,Main.Entries.size()+1);
-            Main.Entries.add(newEntry);
-            list.setAll(Main.Entries);
+           }
+        
+        catch(NumberFormatException e){
+            MessageLabel.setText("Please only input numbers into the to/from rows!");
+            System.err.println("Number format exception at summation!");
+        }
+        catch(IndexOutOfBoundsException e){
+            MessageLabel.setText("One or more of the rows you entered are incorrect!");
+            System.err.println("Index out of bounds exception at summation!");
+        }
+        try{
+            if (AdditionalRows.getText()!=""){
+                String[] str=AdditionalRows.getText().split(",");
+                for (int i = 0; i < str.length; i++) {
+                    cur=actualList.get(Integer.parseInt(str[i])-1);
+                    sum=sum+cur.getAmount();
+            }
+            }
             
+        }
+        catch(NumberFormatException e){
+            System.err.println("Number format exception at summation!");
+        }
+        catch(IndexOutOfBoundsException e){
+            MessageLabel.setText("One or more of the rows you entered are incorrect!");
+            System.err.println("Index out of bounds exception at summation!");
+        }
+        Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Sum:"+start+"-"+end,"-----","",sum,actualList.size()+1);
+            
+            Main.Entries.add(newEntry);
+            list.add(newEntry);
+            actualList=new ArrayList();
+            Main.Entries.forEach(p ->{
+                actualList.add(new Entry(p));
+            });
             update();
-            }
-            catch(NumberFormatException e){
-                MessageLabel.setText("Please only input numbers into the to/from rows!");
-                System.err.println("Number format exception at summation!");
-            }
-            catch(IndexOutOfBoundsException e){
-                MessageLabel.setText("One or more of the rows you entered are incorrect!");
-                System.err.println("Index out of bounds exception at summation!");
-            }
+        
     }
 
     @FXML
+    /**
+     * Calculates the average of the interval specified in the "From" and "To" row numbers,then adds the result to the table
+     */
     private void Averaging(ActionEvent event) {
+        int avg=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText()), count=0;
+        Entry cur;
         try{
-            int avg=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText()), count=0;
-            Entry cur;
+            
             for (int i = start-1; i < end; i++) {
-                cur=Main.Entries.get(i);
+                cur=actualList.get(i);
                 avg=avg+cur.getAmount();
                 count++;
             }
-            avg=avg/count;
-            Entry newEntry=new Entry(LocalDate.now().toString(),"Average:"+start+"-"+end,"-----","",avg,Main.Entries.size()+1);
-            Main.Entries.add(newEntry);
-            list.setAll(Main.Entries);
             
-            update();
         }
         catch(NumberFormatException e){
             MessageLabel.setText("Please only input numbers into the to/from rows!");
@@ -422,27 +479,88 @@ public class FXMLDocumentController implements Initializable {
                 MessageLabel.setText("One or more of the rows you entered are incorrect!");
                 System.err.println("Index out of bounds exception at averaging!");
             }
+        try{
+                if (AdditionalRows.getText()!=""){
+                String[] str=AdditionalRows.getText().split(",");
+                for (int i = 0; i < str.length; i++) {
+                    cur=actualList.get(Integer.parseInt(str[i])-1);
+                    avg=avg+cur.getAmount();
+                    count++;
+            }
+            }
+        }
+        catch(NumberFormatException e){
+            System.err.println("Number format exception at averaging!");
+        }
+        catch(IndexOutOfBoundsException e){
+                MessageLabel.setText("One or more of the rows you entered are incorrect!");
+                System.err.println("Index out of bounds exception at averaging!");
+            }
+        avg=avg/count;
+            Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Average:"+start+"-"+end,"-----","",avg,actualList.size()+1);
+            Main.Entries.add(newEntry);
+            list.add(newEntry);
+            actualList.add(newEntry);
+            update();
     }
-    
+    /**
+     * The name is self-explanatory, but this method makes sure that filtering works on the table.
+     * It also rewrites the row numberings to fit the new filtered list
+     */
     private void connectTableToFilter(){
         //Wrap the ObservableList in a FilteredList (initially display all data)
         FilteredList<Entry> filteredData=new FilteredList<>(list, b-> true);
         //2. Set the filter Predicate whenever the filter changes
         FilterTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            rowNR=1;
             filteredData.setPredicate(entry -> {
-                
                 //If filter text is empty, display all entries
-                if (newValue == null || newValue.isEmpty()) return true;
+                if (newValue == null || newValue.isEmpty()){
+                        entry.setRow(rowNR);
+                        rowNR=rowNR+1;
+                        return true; //Filter matches date
+                    }   
                 
-                String lowerCaseFilter=newValue.toLowerCase();
+                String[] conditionsArray=newValue.split(";");
+                //The different filter elements are searched for separately. Their existence is marked by a semicolon.
+                //Eg.: if the filter is "Electricity;Adam", then the filter will look for rows containing at least one of "Electricity" or "Adam"
+                for (int i = 0; i < conditionsArray.length; i++) {
+                    String lowerCaseFilter=conditionsArray[i].toLowerCase();
+                    
+                    //Compare the contents of the date, type, paid_by and comment columns to the filter text
+                    if (entry.getDate().toLowerCase().contains(lowerCaseFilter)){
+                        entry.setRow(rowNR);
+                        rowNR=rowNR+1;
+                        return true; //Filter matches date
+                    }   
+                    else if (entry.getType().toLowerCase().contains(lowerCaseFilter)){
+                        entry.setRow(rowNR);
+                        rowNR=rowNR+1;
+                        return true; //Filter matches date
+                    }   
+                    else if (String.valueOf(entry.getAmount()).toLowerCase().contains(lowerCaseFilter)){
+                        entry.setRow(rowNR);
+                        rowNR=rowNR+1;
+                        return true; //Filter matches date
+                    }   
+                    else if (entry.getPaid_by().toLowerCase().contains(lowerCaseFilter)){
+                        entry.setRow(rowNR);
+                        rowNR=rowNR+1;
+                        return true; //Filter matches date
+                    }   
+                    else if (entry.getComment().toLowerCase().contains(lowerCaseFilter)){
+                        entry.setRow(rowNR);
+                        rowNR=rowNR+1;
+                        return true; //Filter matches date
+                    }   
+                }
                 
-                //Compare the contents of the date, type, paid_by and comment columns to the filter text
-                if (entry.getDate().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
-                else if (entry.getType().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (String.valueOf(entry.getAmount()).toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (entry.getPaid_by().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (entry.getComment().toLowerCase().contains(lowerCaseFilter)) return true;
                 return false; //Does not match
+            });
+            //Updating the list of elements that can be used for calculations
+            actualList=new ArrayList();
+            filteredData.forEach(p ->{
+               actualList.add(p);
             });
         });
         
@@ -454,6 +572,46 @@ public class FXMLDocumentController implements Initializable {
         
         //5. Add sorted and filtered data to the table
         table.setItems(sortedData);
+    }
+
+    @FXML
+    /**
+     * Opens popup window with contact info
+     */
+    private void ContactButtonAction(ActionEvent event) {
+         //creates popup window
+        Stage popupwindow=new Stage();
+
+        popupwindow.initModality(Modality.APPLICATION_MODAL);
+        popupwindow.setTitle("Hi!");
+
+        //Warning message
+        Label label1= new Label("Thank you for trying out my first spreadsheet program! \nIf you have any questions, please contact me at\n myemail@gmail.com");
+        label1.setAlignment(Pos.CENTER);
+        label1.setTextAlignment(TextAlignment.CENTER);
+        
+        //position of all elements in window is determined
+        VBox Vlayout= new VBox(10);
+
+        //elements added
+        Vlayout.getChildren().add(label1);
+
+        Vlayout.setAlignment(Pos.CENTER);
+
+        Scene scene1= new Scene(Vlayout, 400, 300);
+
+        popupwindow.setOnCloseRequest(e ->{
+            event.consume();
+        });
+        popupwindow.setScene(scene1);
+        popupwindow.show();
+    }
+
+    @FXML
+    /**
+     * Tutorial to be implemented in a future release
+     */
+    private void TutorialButtonAction(ActionEvent event) {
     }
     
 }

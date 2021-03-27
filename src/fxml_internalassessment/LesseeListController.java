@@ -224,9 +224,6 @@ public class LesseeListController implements Initializable {
         catch(IOException e){
             e.printStackTrace();
         }
-        //Set filter to track the current version of the table
-        connectTableToFilter();
-        
         //Keeps track of the state of the table, in case the user wants to rewind
         ArrayList<Lessee> newNode=new ArrayList<>();
         list.forEach(p ->{
