@@ -410,6 +410,7 @@ public class FXMLDocumentController implements Initializable {
     private void Summation(ActionEvent event) {
         int sum=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText());
         Entry cur;
+        String concat="";
         try{
             
             for (int i = start-1; i < end; i++) {
@@ -428,22 +429,24 @@ public class FXMLDocumentController implements Initializable {
         }
         try{
             if (AdditionalRows.getText()!=""){
-                String[] str=AdditionalRows.getText().split(",");
+                String[] str=AdditionalRows.getText().split(";");
                 for (int i = 0; i < str.length; i++) {
                     cur=actualList.get(Integer.parseInt(str[i])-1);
                     sum=sum+cur.getAmount();
-            }
+                    concat=concat+str[i]+";";
+            }    
             }
             
         }
         catch(NumberFormatException e){
+            if (FromRow.getText().matches("[0-9]+")==false) MessageLabel.setText("Please only input numbers into the to/from rows!");
             System.err.println("Number format exception at summation!");
         }
         catch(IndexOutOfBoundsException e){
-            MessageLabel.setText("One or more of the rows you entered are incorrect!");
-            System.err.println("Index out of bounds exception at summation!");
-        }
-        Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Sum:"+start+"-"+end,"-----","",sum,actualList.size()+1);
+                if (FromRow.getText()!="0" && ToRow.getText()!="0") MessageLabel.setText("One or more of the rows you entered are incorrect!");
+                System.err.println("Index out of bounds exception at summation!");
+            }
+        Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Sum:"+start+"-"+end+", "+concat,"*****","",sum,actualList.size()+1);
             
             Main.Entries.add(newEntry);
             list.add(newEntry);
@@ -462,6 +465,7 @@ public class FXMLDocumentController implements Initializable {
     private void Averaging(ActionEvent event) {
         int avg=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText()), count=0;
         Entry cur;
+        String concat="";
         try{
             
             for (int i = start-1; i < end; i++) {
@@ -472,20 +476,21 @@ public class FXMLDocumentController implements Initializable {
             
         }
         catch(NumberFormatException e){
-            MessageLabel.setText("Please only input numbers into the to/from rows!");
+            if (FromRow.getText().matches("[0-9]+")==false) MessageLabel.setText("Please only input numbers into the to/from rows!");
             System.err.println("Number format exception at averaging!");
         }
         catch(IndexOutOfBoundsException e){
-                MessageLabel.setText("One or more of the rows you entered are incorrect!");
+                if (FromRow.getText()!="0" && ToRow.getText()!="0") MessageLabel.setText("One or more of the rows you entered are incorrect!");
                 System.err.println("Index out of bounds exception at averaging!");
             }
         try{
                 if (AdditionalRows.getText()!=""){
-                String[] str=AdditionalRows.getText().split(",");
+                String[] str=AdditionalRows.getText().split(";");
                 for (int i = 0; i < str.length; i++) {
                     cur=actualList.get(Integer.parseInt(str[i])-1);
                     avg=avg+cur.getAmount();
                     count++;
+                    concat=concat+str[i]+";";
             }
             }
         }
@@ -497,7 +502,7 @@ public class FXMLDocumentController implements Initializable {
                 System.err.println("Index out of bounds exception at averaging!");
             }
         avg=avg/count;
-            Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Average:"+start+"-"+end,"-----","",avg,actualList.size()+1);
+            Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Average:"+start+"-"+end+", "+concat,"*****","",avg,actualList.size()+1);
             Main.Entries.add(newEntry);
             list.add(newEntry);
             actualList.add(newEntry);
@@ -505,7 +510,10 @@ public class FXMLDocumentController implements Initializable {
     }
     /**
      * The name is self-explanatory, but this method makes sure that filtering works on the table.
-     * It also rewrites the row numberings to fit the new filtered list
+     * It also rewrites the row numberings to fit the new filtered list.
+     * Multiple expressions can be searched, if they are divided either by a ";" or a "-"
+     * ";" creates a logical OR relationship between the two expressions, while
+     * "-" creates a logical AND.
      */
     private void connectTableToFilter(){
         //Wrap the ObservableList in a FilteredList (initially display all data)
@@ -521,38 +529,33 @@ public class FXMLDocumentController implements Initializable {
                         return true; //Filter matches date
                     }   
                 
-                String[] conditionsArray=newValue.split(";");
+                String[] ORconditionsArray=newValue.split(";");
                 //The different filter elements are searched for separately. Their existence is marked by a semicolon.
                 //Eg.: if the filter is "Electricity;Adam", then the filter will look for rows containing at least one of "Electricity" or "Adam"
-                for (int i = 0; i < conditionsArray.length; i++) {
-                    String lowerCaseFilter=conditionsArray[i].toLowerCase();
+                for (int i = 0; i < ORconditionsArray.length; i++) {
+                    String[] ANDconditionsArray=ORconditionsArray[i].split("-");
+                    boolean[] isTrue=new boolean[ANDconditionsArray.length];
+                    boolean isAllTrue=true;
                     
-                    //Compare the contents of the date, type, paid_by and comment columns to the filter text
-                    if (entry.getDate().toLowerCase().contains(lowerCaseFilter)){
-                        entry.setRow(rowNR);
-                        rowNR=rowNR+1;
-                        return true; //Filter matches date
-                    }   
-                    else if (entry.getType().toLowerCase().contains(lowerCaseFilter)){
-                        entry.setRow(rowNR);
-                        rowNR=rowNR+1;
-                        return true; //Filter matches date
-                    }   
-                    else if (String.valueOf(entry.getAmount()).toLowerCase().contains(lowerCaseFilter)){
-                        entry.setRow(rowNR);
-                        rowNR=rowNR+1;
-                        return true; //Filter matches date
-                    }   
-                    else if (entry.getPaid_by().toLowerCase().contains(lowerCaseFilter)){
-                        entry.setRow(rowNR);
-                        rowNR=rowNR+1;
-                        return true; //Filter matches date
-                    }   
-                    else if (entry.getComment().toLowerCase().contains(lowerCaseFilter)){
-                        entry.setRow(rowNR);
-                        rowNR=rowNR+1;
-                        return true; //Filter matches date
-                    }   
+                    
+                    for (int j = 0; j < ANDconditionsArray.length; j++) {
+                        String lowerCaseFilter=ANDconditionsArray[j].toLowerCase();
+                        //Compare the contents of the date, type, paid_by and comment columns to the filter text
+                        if (entry.getDate().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true; //One of the conditions matches
+                        else if (entry.getType().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                        else if (String.valueOf(entry.getAmount()).toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                        else if (entry.getPaid_by().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                        else if (entry.getComment().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                    }
+                      for (int j = 0; j < isTrue.length; j++) {
+                        if (isTrue[j]) isTrue[j]=false;
+                        else isAllTrue=false;
+                    }
+                      if (isAllTrue==true) {
+                          entry.setRow(rowNR);
+                          rowNR++;
+                          return true; //Row matches ALL conditions
+                      }
                 }
                 
                 return false; //Does not match

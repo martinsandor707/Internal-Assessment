@@ -264,7 +264,6 @@ public class LesseeListController implements Initializable {
              file.flush();
              
             list.setAll(Main.LesseeList);
-            connectTableToFilter();
         }
         
         catch(IOException e){
@@ -361,14 +360,30 @@ public class LesseeListController implements Initializable {
                 //If filter text is empty, display all entries
                 if (newValue == null || newValue.isEmpty()) return true;
                 
-                String lowerCaseFilter=newValue.toLowerCase();
+                String[] ORconditionsArray=newValue.split(";");
+                for (int i = 0; i < ORconditionsArray.length; i++) {
+                    String[] ANDconditionsArray=ORconditionsArray[i].split("-");
+                    boolean[] isTrue=new boolean[ANDconditionsArray.length];
+                    boolean isAllTrue=true;
+                    for (int j = 0; j < ANDconditionsArray.length; j++) {
+                        String lowerCaseFilter=ANDconditionsArray[j].toLowerCase();
+                        //Compare the contents of the date, type, paid_by and comment columns to the filter text
+                        if (lessee.getName().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;   //Filter matches date
+                        else if (lessee.getAddress().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                        else if (lessee.getPhone_number().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                        else if (lessee.getEmail().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                        else if (lessee.getComments().toLowerCase().contains(lowerCaseFilter)) isTrue[j]=true;
+                    }
+                    for (int j = 0; j < isTrue.length; j++) {
+                        if (isTrue[j]) isTrue[j]=false;
+                        else isAllTrue=false;
+                    }
+                      if (isAllTrue==true) {
+                          return true; //Row matches ALL conditions
+                      }
+                }
                 
-                //Compare the contents of the date, type, paid_by and comment columns to the filter text
-                if (lessee.getName().toLowerCase().contains(lowerCaseFilter)) return true;   //Filter matches date
-                else if (lessee.getAddress().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (lessee.getPhone_number().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (lessee.getEmail().toLowerCase().contains(lowerCaseFilter)) return true;
-                else if (lessee.getComments().toLowerCase().contains(lowerCaseFilter)) return true;
+                
                 return false; //Does not match
             });
         });
