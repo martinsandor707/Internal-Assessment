@@ -529,11 +529,11 @@ public class FXMLDocumentController implements Initializable {
                         return true; //Filter matches date
                     }   
                 
-                String[] ORconditionsArray=newValue.split(";");
-                //The different filter elements are searched for separately. Their existence is marked by a semicolon.
-                //Eg.: if the filter is "Electricity;Adam", then the filter will look for rows containing at least one of "Electricity" or "Adam"
+                String[] ORconditionsArray=newValue.split(" or ");
+                //The different filter elements are searched for separately. Their existence is marked by the word "or".
+                //Eg.: if the filter is "Electricity or Adam", then the filter will look for rows containing at least one of "Electricity" or "Adam"
                 for (int i = 0; i < ORconditionsArray.length; i++) {
-                    String[] ANDconditionsArray=ORconditionsArray[i].split("-");
+                    String[] ANDconditionsArray=ORconditionsArray[i].split(" and ");
                     boolean[] isTrue=new boolean[ANDconditionsArray.length];
                     boolean isAllTrue=true;
                     

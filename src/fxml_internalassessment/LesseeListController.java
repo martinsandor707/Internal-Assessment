@@ -360,9 +360,9 @@ public class LesseeListController implements Initializable {
                 //If filter text is empty, display all entries
                 if (newValue == null || newValue.isEmpty()) return true;
                 
-                String[] ORconditionsArray=newValue.split(";");
+                String[] ORconditionsArray=newValue.split(" or ");
                 for (int i = 0; i < ORconditionsArray.length; i++) {
-                    String[] ANDconditionsArray=ORconditionsArray[i].split("-");
+                    String[] ANDconditionsArray=ORconditionsArray[i].split(" and ");
                     boolean[] isTrue=new boolean[ANDconditionsArray.length];
                     boolean isAllTrue=true;
                     for (int j = 0; j < ANDconditionsArray.length; j++) {

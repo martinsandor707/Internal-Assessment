@@ -56,10 +56,8 @@
       <Button layoutX="835.0" layoutY="563.0" onAction="#Averaging" text="Average" />
       <Button layoutX="88.0" layoutY="3.0" onAction="#ContactButtonAction" text="Contact" />
       <Button layoutX="237.0" layoutY="2.0" onAction="#TutorialButtonAction" text="Tutorial" />
-      <Label layoutX="151.0" layoutY="569.0" text="Semicolon --&gt; OR" />
-      <Label layoutX="607.0" layoutY="598.0" prefHeight="17.0" prefWidth="89.0" text="Additional rows" />
+      <Label layoutX="607.0" layoutY="598.0" prefHeight="17.0" prefWidth="89.0" text="Additional rows:" />
       <TextField fx:id="AdditionalRows" alignment="CENTER" layoutX="711.0" layoutY="596.0" prefHeight="25.0" prefWidth="76.0" />
       <Label layoutX="796.0" layoutY="600.0" text="Use semicolons to separate rows" />
-      <Label layoutX="151.0" layoutY="588.0" text="Dash         --&gt; AND" />
     </children>
 </AnchorPane>
