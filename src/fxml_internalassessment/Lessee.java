@@ -7,7 +7,8 @@ package fxml_internalassessment;
 
 /**
  *
- * @author Martin
+ * Object type used in the LesseeList.json database. Contents of the database are shown in LesseeList.fxml, and are organized into such objects
+ * Aside from the variables themselves, this class only has the basic getters and setters, plus a constructor.
  */
 public class Lessee {
     private String name, address, phone_number, email, comments;

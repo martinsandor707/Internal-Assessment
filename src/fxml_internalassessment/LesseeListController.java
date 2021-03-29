@@ -41,6 +41,9 @@ import org.json.simple.JSONObject;
  * @author Martin
  * This class is responsible for helping the user view the list of lessees, which is stored in a file called LesseeList.json.
  * Much like the main table, this table saves any changes into a temporary file, and changes are only permanent if the Save button is pressed.
+ * A large amount of code present in FXMLDocumentController.java has been reused here, the biggest difference is that instead of Entry type objects,
+ * This table has its own type of objects called Lessee.
+ * If any explanations are missing here, please view the extensive commenting of FXMLDocumentController.java
  */
 public class LesseeListController implements Initializable {
 

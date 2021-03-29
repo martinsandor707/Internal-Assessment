@@ -6,8 +6,8 @@
 package fxml_internalassessment;
 
 /**
- *
- * @author Martin
+ * Class used by the main Output.json database. Elements in the main table are shown according to this object.
+ * Aside from the variables themselves, this class only has the basic getters and setters, plus a constructor.
  */
 public class Entry {
     

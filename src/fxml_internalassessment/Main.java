@@ -37,6 +37,9 @@ import org.json.simple.parser.ParseException;
 /**
  *
  * @author Martin
+ * The main class of the program, this is the first class to run when the program is launched
+ * It loads in the contents of the databases into local static variables, to be used later by other classes directly.
+ * 
  */
 public class Main extends Application {
     //The current state of the database
@@ -139,7 +142,7 @@ public class Main extends Application {
         }
     }
     /**
-    *Displays pop-up window  asking whether the user wants to save before exiting the application
+    *Displays pop-up window asking whether the user wants to save before exiting the application
     *Only activates if the user changed the table since last saving
     */
     private EventHandler<WindowEvent> confirmCloseRequestHandler= event ->{
@@ -238,7 +241,7 @@ public class Main extends Application {
     
     /**
     *Checks the contents of Output.json, LesseeList.json and their temporary versions.
-    *returns true if their content is identical, false otherwise
+    *Returns true if their content is identical, false otherwise
     * */
     private boolean isSameContent(){
         try{

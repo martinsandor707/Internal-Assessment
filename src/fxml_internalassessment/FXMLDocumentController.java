@@ -47,6 +47,8 @@ import org.json.simple.JSONObject;
 /**
  *
  * @author Martin
+ * This class is responsible for helping the user view the main database, which is stored in a file called Output.json.
+ * This table saves any changes into a temporary file, and changes are only permanent if the Save button is pressed.
  */
 public class FXMLDocumentController implements Initializable {
     
@@ -78,7 +80,7 @@ public class FXMLDocumentController implements Initializable {
     IntegerStringConverter converter=new IntegerStringConverter();
     //Used to preserve the unfiltered database when the user manipulates the filtered version
     static String dummy="";
-    //Used to adjust row numbers when a row is deleted
+    //Used to adjust row numbers when a row is deleted, or the table is filtered.
     static int rowNR;
     //The list that appears in the table at first
     ObservableList list=FXCollections.observableArrayList(Main.Entries);
@@ -198,7 +200,7 @@ public class FXMLDocumentController implements Initializable {
         
     }
 
-    //Opens LesseeList window
+    //Opens LesseeList.fxml
     @FXML
     private void HandleChangeScene2(ActionEvent event) {
          try{
@@ -309,7 +311,7 @@ public class FXMLDocumentController implements Initializable {
     * */
     private void HandleRewindAction(ActionEvent event) {
         JSONArray array=new JSONArray();
-        
+        //Table contents are switched to a previous iteration if one exists
         if (Main.currentNode.getPrev()!=null) Main.currentNode=Main.currentNode.getPrev();
         else return;
         Main.Entries=Main.currentNode.getValueDeep();
@@ -330,7 +332,7 @@ public class FXMLDocumentController implements Initializable {
             
         });
         
-        
+        //Previous iteration is also copied into temporary file
         try(FileWriter file=new FileWriter("OutputTemporary.json")){
             file.write(array.toJSONString());
             file.flush();
@@ -405,12 +407,13 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     /**
-     * Sums up the interval specified in the "From" and "To" row numbers, then adds the result to the table
+     * Sums up the interval specified in the "From" and "To" and "Additional rows" row numbers, then adds the result to the table.
      */
     private void Summation(ActionEvent event) {
         int sum=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText());
         Entry cur;
         String concat="";
+        //From-to interval is summed up
         try{
             
             for (int i = start-1; i < end; i++) {
@@ -427,6 +430,7 @@ public class FXMLDocumentController implements Initializable {
             MessageLabel.setText("One or more of the rows you entered are incorrect!");
             System.err.println("Index out of bounds exception at summation!");
         }
+        //Additional rows are also summed up, if they exist
         try{
             if (AdditionalRows.getText()!=""){
                 String[] str=AdditionalRows.getText().split(";");
@@ -447,25 +451,26 @@ public class FXMLDocumentController implements Initializable {
                 System.err.println("Index out of bounds exception at summation!");
             }
         Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Sum:"+start+"-"+end+", "+concat,"*****","",sum,actualList.size()+1);
-            
-            Main.Entries.add(newEntry);
-            list.add(newEntry);
-            actualList=new ArrayList();
-            Main.Entries.forEach(p ->{
-                actualList.add(new Entry(p));
-            });
-            update();
+        //New element is created and added to all relevant lists.    
+        Main.Entries.add(newEntry);
+        list.add(newEntry);
+        actualList=new ArrayList();
+        Main.Entries.forEach(p ->{
+            actualList.add(new Entry(p));
+        });
+        update();
         
     }
 
     @FXML
     /**
-     * Calculates the average of the interval specified in the "From" and "To" row numbers,then adds the result to the table
+     * Calculates the average of the interval specified in the "From" and "To" and "Additonal Rows" row numbers,then adds the result to the table
      */
     private void Averaging(ActionEvent event) {
         int avg=0, start=Integer.parseInt(FromRow.getText()), end=Integer.parseInt(ToRow.getText()), count=0;
         Entry cur;
         String concat="";
+        //From-to interval is summed up
         try{
             
             for (int i = start-1; i < end; i++) {
@@ -483,6 +488,7 @@ public class FXMLDocumentController implements Initializable {
                 if (FromRow.getText()!="0" && ToRow.getText()!="0") MessageLabel.setText("One or more of the rows you entered are incorrect!");
                 System.err.println("Index out of bounds exception at averaging!");
             }
+        //Additional rows are also summed up, if they exist
         try{
                 if (AdditionalRows.getText()!=""){
                 String[] str=AdditionalRows.getText().split(";");
@@ -502,18 +508,19 @@ public class FXMLDocumentController implements Initializable {
                 System.err.println("Index out of bounds exception at averaging!");
             }
         avg=avg/count;
-            Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Average:"+start+"-"+end+", "+concat,"*****","",avg,actualList.size()+1);
-            Main.Entries.add(newEntry);
-            list.add(newEntry);
-            actualList.add(newEntry);
-            update();
+        Entry newEntry=new Entry(LocalDate.now().toString(),FilterTextField.getText()+" Average:"+start+"-"+end+", "+concat,"*****","",avg,actualList.size()+1);
+        //New element is created and added to all relevant lists.   
+        Main.Entries.add(newEntry);
+        list.add(newEntry);
+        actualList.add(newEntry);
+        update();
     }
     /**
      * The name is self-explanatory, but this method makes sure that filtering works on the table.
      * It also rewrites the row numberings to fit the new filtered list.
-     * Multiple expressions can be searched, if they are divided either by a ";" or a "-"
-     * ";" creates a logical OR relationship between the two expressions, while
-     * "-" creates a logical AND.
+     * Multiple expressions can be searched, if they are divided either by an " or " or an " and "
+     * " or " creates a logical OR relationship between the two expressions, while
+     * " and " creates a logical AND.
      */
     private void connectTableToFilter(){
         //Wrap the ObservableList in a FilteredList (initially display all data)
